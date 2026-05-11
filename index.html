@@ -14,18 +14,12 @@
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--black); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
 
-#loading-screen { position:fixed; inset:0; background:var(--black); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
-#loading-screen h1 { font-family:'Playfair Display',serif; color:var(--gold); font-size:28px; }
-#loading-screen p { color:var(--text-muted); font-size:14px; }
-.spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
-
-#lock-screen { position:fixed; inset:0; background:#0a0a0a; z-index:9998; display:flex; align-items:center; justify-content:center; }
+#lock-screen { position:fixed; inset:0; background:#0a0a0a; z-index:9999; display:flex; align-items:center; justify-content:center; }
 #lock-screen .box { background:#1a1a1a; border:1px solid #2a2a2a; border-radius:16px; padding:32px; width:320px; text-align:center; }
 #lock-screen h1 { font-family:'Playfair Display',serif; font-size:24px; color:#F2C102; margin-bottom:8px; }
 #lock-screen p { font-size:12px; color:#888; margin-bottom:24px; }
 #lock-screen input { width:100%; background:#222; border:1px solid #2a2a2a; border-radius:8px; padding:10px 12px; color:#f0f0f0; font-size:14px; outline:none; margin-bottom:12px; font-family:'DM Sans',sans-serif; }
-#lock-screen button { width:100%; background:#F2C102; color:#000; border:none; border-radius:8px; padding:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+#lock-screen button { width:100%; background:#F2C102; color:#000; border:none; border-radius:8px; padding:10px; font-size:14px; font-weight:600; cursor:pointer; }
 #pass-error { color:#e74c3c; font-size:12px; margin-top:8px; display:none; }
 
 .header { background:var(--dark); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
@@ -42,6 +36,7 @@ body { background:var(--black); color:var(--text); font-family:'DM Sans',sans-se
 .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
 .btn-sm { padding:5px 10px; font-size:12px; }
 .btn-danger { background:var(--red); color:#fff; }
+.btn-danger:hover { background:#c0392b; }
 .btn-icon { background:var(--card2); border:1px solid var(--border); color:var(--text-muted); padding:4px 8px; border-radius:6px; font-size:12px; cursor:pointer; }
 .btn-icon:hover { color:var(--gold); border-color:var(--gold); }
 
@@ -53,14 +48,15 @@ body { background:var(--black); color:var(--text); font-family:'DM Sans',sans-se
 .tab-content { display:none; }
 .tab-content.active { display:block; }
 
-.stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-bottom:24px; }
+.stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; margin-bottom:24px; }
 .stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:16px; }
 .stat-label { font-size:11px; color:var(--text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px; }
 .stat-value { font-size:24px; font-weight:600; color:var(--gold); }
 
 .filters { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
 .filter-select,.filter-input { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; }
-.filter-input { width:220px; }
+.filter-select:focus,.filter-input:focus { border-color:var(--gold); }
+.filter-input { width:200px; }
 
 .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
 .table-scroll { overflow-x:auto; }
@@ -105,6 +101,24 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 .loyalty-reward span:first-child { color:var(--text-muted); }
 .loyalty-reward span:last-child { color:var(--gold); font-weight:600; }
 
+.season-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:10px; margin-bottom:24px; }
+.season-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; cursor:pointer; transition:all 0.2s; text-align:center; }
+.season-card:hover { border-color:var(--gold); background:rgba(242,193,2,0.05); transform:translateY(-2px); }
+.season-icon { font-size:28px; margin-bottom:6px; }
+.season-name { font-size:12px; font-weight:600; margin-bottom:2px; }
+.season-month { font-size:11px; color:var(--text-muted); }
+.season-count { margin-top:6px; font-size:11px; }
+
+.settings-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; }
+.settings-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
+.settings-card h3 { font-family:'Playfair Display',serif; font-size:16px; color:var(--gold); margin-bottom:4px; }
+.settings-card p { font-size:12px; color:var(--text-muted); margin-bottom:16px; }
+.settings-list { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; max-height:200px; overflow-y:auto; }
+.settings-item { display:flex; align-items:center; justify-content:space-between; background:var(--card2); border-radius:8px; padding:10px 12px; }
+.settings-item span { font-size:13px; }
+.settings-add { display:flex; gap:8px; flex-wrap:wrap; }
+.settings-add input { flex:1; min-width:120px; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; }
+
 .section-title { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); margin-bottom:16px; }
 .empty { text-align:center; padding:60px 20px; color:var(--text-muted); }
 .empty-icon { font-size:48px; margin-bottom:12px; }
@@ -119,13 +133,7 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 </head>
 <body>
 
-<div id="loading-screen">
-  <div class="spinner"></div>
-  <h1>TrendyBuzz</h1>
-  <p>Loading...</p>
-</div>
-
-<div id="lock-screen" style="display:none">
+<div id="lock-screen">
   <div class="box">
     <h1>TrendyBuzz</h1>
     <p>Offer Management System</p>
@@ -150,14 +158,18 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('all')">📋 All Offers</div>
-  <div class="tab" onclick="switchTab('prices')">🏷 Product Prices</div>
   <div class="tab" onclick="switchTab('website')">🌐 Website</div>
   <div class="tab" onclick="switchTab('inbox')">💬 Inbox</div>
   <div class="tab" onclick="switchTab('office')">🏢 Office</div>
+  <div class="tab" onclick="switchTab('seasonal')">🗓 Seasonal</div>
   <div class="tab" onclick="switchTab('loyalty')">⭐ Loyalty</div>
+  <div class="tab" onclick="switchTab('prices')">🏷 Prices</div>
+  <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
 </div>
 
 <div class="main">
+
+  <!-- ALL OFFERS -->
   <div class="tab-content active" id="tab-all">
     <div class="stats-row" id="stats-row"></div>
     <div class="filters">
@@ -166,8 +178,11 @@ tr:hover td { background:rgba(242,193,2,0.03); }
         <option value="">All Status</option><option value="active">Active</option>
         <option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="inactive">Inactive</option>
       </select>
+      <select class="filter-select" onchange="filterOffers()" id="filter-type">
+        <option value="">All Types</option>
+      </select>
       <select class="filter-select" onchange="filterOffers()" id="filter-channel">
-        <option value="">All Channels</option><option>Website</option><option>Inbox</option><option>Office</option>
+        <option value="">All Channels</option>
       </select>
       <select class="filter-select" onchange="filterOffers()" id="filter-delivery">
         <option value="">All Delivery</option><option value="yes">Free</option><option value="no">Paid</option>
@@ -179,48 +194,157 @@ tr:hover td { background:rgba(242,193,2,0.03); }
     </table></div></div>
   </div>
 
+  <!-- WEBSITE -->
   <div class="tab-content" id="tab-website">
     <h2 class="section-title">🌐 Website Offers</h2>
+    <div class="filters">
+      <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterTab('web')" id="web-search">
+      <select class="filter-select" onchange="filterTab('web')" id="web-status"><option value="">All Status</option><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="inactive">Inactive</option></select>
+      <select class="filter-select" onchange="filterTab('web')" id="web-type"><option value="">All Types</option></select>
+      <select class="filter-select" onchange="filterTab('web')" id="web-delivery"><option value="">All Delivery</option><option value="yes">Free</option><option value="no">Paid</option></select>
+    </div>
     <div class="table-wrap"><div class="table-scroll"><table>
       <thead><tr><th>Offer Name</th><th>Season</th><th>Code</th><th>Products</th><th>SKU</th><th>Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Delivery</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
       <tbody id="web-tbody"></tbody>
     </table></div></div>
   </div>
 
+  <!-- INBOX -->
   <div class="tab-content" id="tab-inbox">
     <h2 class="section-title">💬 Inbox Offers</h2>
+    <div class="filters">
+      <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterTab('inbox')" id="inbox-search">
+      <select class="filter-select" onchange="filterTab('inbox')" id="inbox-status"><option value="">All Status</option><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="inactive">Inactive</option></select>
+      <select class="filter-select" onchange="filterTab('inbox')" id="inbox-type"><option value="">All Types</option></select>
+      <select class="filter-select" onchange="filterTab('inbox')" id="inbox-delivery"><option value="">All Delivery</option><option value="yes">Free</option><option value="no">Paid</option></select>
+    </div>
     <div class="table-wrap"><div class="table-scroll"><table>
       <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Delivery</th><th>Notes</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
       <tbody id="inbox-tbody"></tbody>
     </table></div></div>
   </div>
 
+  <!-- OFFICE -->
   <div class="tab-content" id="tab-office">
     <h2 class="section-title">🏢 Office Offers</h2>
+    <div class="filters">
+      <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterTab('office')" id="office-search">
+      <select class="filter-select" onchange="filterTab('office')" id="office-status"><option value="">All Status</option><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="inactive">Inactive</option></select>
+      <select class="filter-select" onchange="filterTab('office')" id="office-type"><option value="">All Types</option></select>
+      <select class="filter-select" onchange="filterTab('office')" id="office-delivery"><option value="">All Delivery</option><option value="yes">Free</option><option value="no">Paid</option></select>
+    </div>
     <div class="table-wrap"><div class="table-scroll"><table>
       <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Notes</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
       <tbody id="office-tbody"></tbody>
     </table></div></div>
   </div>
 
+  <!-- SEASONAL -->
+  <div class="tab-content" id="tab-seasonal">
+    <h2 class="section-title">🗓 Seasonal Calendar</h2>
+    <div class="filters">
+      <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterTab('season')" id="season-search">
+      <select class="filter-select" onchange="filterTab('season')" id="season-status"><option value="">All Status</option><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="inactive">Inactive</option></select>
+    </div>
+    <div class="season-grid" id="season-icons"></div>
+    <div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Season</th><th>Offer Name</th><th>Products</th><th>Type</th><th>Discount</th><th>Code</th><th>Delivery</th><th>Status</th><th>Start → End</th><th>Actions</th></tr></thead>
+      <tbody id="season-tbody"></tbody>
+    </table></div></div>
+  </div>
+
+  <!-- LOYALTY -->
   <div class="tab-content" id="tab-loyalty">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <h2 class="section-title" style="margin-bottom:0">⭐ Loyalty & Reviews</h2>
-      <button class="btn btn-gold" onclick="openLoyaltyModal()">+ Add</button>
+      <div style="display:flex;gap:10px">
+        <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterLoyalty()" id="loyalty-search" style="width:160px">
+        <select class="filter-select" onchange="filterLoyalty()" id="loyalty-status"><option value="">All Status</option><option value="active">Active</option><option value="planned">Planned</option><option value="inactive">Inactive</option></select>
+        <button class="btn btn-gold" onclick="openLoyaltyModal()">+ Add</button>
+      </div>
     </div>
     <div class="loyalty-grid" id="loyalty-grid"></div>
   </div>
 
+  <!-- PRODUCT PRICES -->
   <div class="tab-content" id="tab-prices">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <h2 class="section-title" style="margin-bottom:0">🏷 Product Prices</h2>
       <button class="btn btn-gold" onclick="openPriceModal()">+ Add Product</button>
+    </div>
+    <div class="filters">
+      <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterPrices()" id="price-search">
+      <select class="filter-select" onchange="filterPrices()" id="price-status">
+        <option value="">All Status</option><option value="sale">On Sale</option><option value="regular">Regular</option><option value="discontinued">Discontinued</option>
+      </select>
+      <select class="filter-select" onchange="filterPrices()" id="price-platform">
+        <option value="">All Platforms</option><option>Website</option><option>Inbox</option><option>Office</option><option>All Platforms</option>
+      </select>
     </div>
     <div class="table-wrap"><div class="table-scroll"><table>
       <thead><tr><th>Product Name</th><th>SKU</th><th>Category</th><th>Regular ৳</th><th>Sale ৳</th><th>Discount %</th><th>Discount ৳</th><th>Platform</th><th>Status</th><th>Start</th><th>End</th><th>Note</th><th>Actions</th></tr></thead>
       <tbody id="prices-tbody"></tbody>
     </table></div></div>
   </div>
+
+  <!-- SETTINGS -->
+  <div class="tab-content" id="tab-settings">
+    <h2 class="section-title">⚙️ Settings</h2>
+    <div class="settings-grid">
+      <div class="settings-card">
+        <h3>🗓 Season Categories</h3>
+        <p>Season card add বা delete করো</p>
+        <div class="settings-list" id="cat-list"></div>
+        <div class="settings-add" style="flex-direction:column;gap:8px">
+          <div style="display:flex;gap:8px">
+            <input type="text" id="cat-emoji" placeholder="🎉" style="width:60px;text-align:center;font-size:18px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);outline:none">
+            <input type="text" id="cat-name" placeholder="Category name..." style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+          </div>
+          <div style="display:flex;gap:8px">
+            <input type="text" id="cat-month" placeholder="Month e.g. April" style="flex:1;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none">
+            <button class="btn btn-gold btn-sm" onclick="addCategory()">+ Add</button>
+          </div>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3>💸 Discount Types</h3>
+        <p>Discount type add বা delete করো</p>
+        <div class="settings-list" id="dtype-list"></div>
+        <div class="settings-add">
+          <input type="text" id="dtype-input" placeholder="New discount type...">
+          <button class="btn btn-gold btn-sm" onclick="addSetting('discountTypes','dtype-input','dtype-list')">Add</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3>📡 Channels</h3>
+        <p>Sales channel add বা delete করো</p>
+        <div class="settings-list" id="channel-list"></div>
+        <div class="settings-add">
+          <input type="text" id="channel-input" placeholder="New channel...">
+          <button class="btn btn-gold btn-sm" onclick="addSetting('channels','channel-input','channel-list')">Add</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3>🚚 Delivery Rules</h3>
+        <p>Delivery rule add বা delete করো</p>
+        <div class="settings-list" id="delivery-list"></div>
+        <div class="settings-add">
+          <input type="text" id="delivery-input" placeholder="e.g. Buy 2 = Free Delivery">
+          <button class="btn btn-gold btn-sm" onclick="addSetting('deliveryRules','delivery-input','delivery-list')">Add</button>
+        </div>
+      </div>
+      <div class="settings-card">
+        <h3>📊 Status Types</h3>
+        <p>Status type add বা delete করো</p>
+        <div class="settings-list" id="status-list"></div>
+        <div class="settings-add">
+          <input type="text" id="status-input" placeholder="New status...">
+          <button class="btn btn-gold btn-sm" onclick="addSetting('statusTypes','status-input','status-list')">Add</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
 </div>
 
@@ -230,22 +354,16 @@ tr:hover td { background:rgba(242,193,2,0.03); }
     <div class="modal-header"><h2 id="modal-title">New Offer</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
     <div class="modal-body"><div class="form-grid">
       <div class="form-group full"><label>Offer Name *</label><input type="text" id="f-name" placeholder="e.g. Noboborsho Flash Sale"></div>
-      <div class="form-group"><label>Season</label><input type="text" id="f-season" placeholder="e.g. Bundle Offer"></div>
+      <div class="form-group"><label>Season</label><select id="f-season"></select></div>
       <div class="form-group"><label>Discount Code</label><input type="text" id="f-code" placeholder="e.g. NOBO10"></div>
       <div class="form-group full"><label>Products</label><input type="text" id="f-products" placeholder="e.g. Smokey Top, Pleated Skirt"></div>
       <div class="form-group"><label>SKU</label><input type="text" id="f-sku" placeholder="e.g. ST-001"></div>
       <div class="form-group"><label>Regular Price (৳)</label><input type="number" id="f-regular" placeholder="e.g. 800"></div>
       <div class="form-group"><label>Offer Price (৳)</label><input type="number" id="f-offer" placeholder="e.g. 720"></div>
-      <div class="form-group"><label>Discount Type</label>
-        <select id="f-type"><option value="">— Select —</option><option>Percent OFF</option><option>Fixed Price</option><option>Bundle</option><option>Combo</option><option>Volume / Tiered</option><option>Free Delivery</option><option>BOGO</option><option>Loyalty</option></select>
-      </div>
+      <div class="form-group"><label>Discount Type</label><select id="f-type"></select></div>
       <div class="form-group"><label>Discount</label><input type="text" id="f-discount" placeholder="e.g. 10% or ৳80"></div>
-      <div class="form-group"><label>Channel</label>
-        <select id="f-channel"><option value="">— Select —</option><option>Website</option><option>Inbox</option><option>Office</option><option>Website + Inbox</option><option>All Channels</option></select>
-      </div>
-      <div class="form-group"><label>Status</label>
-        <select id="f-status"><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="inactive">Inactive</option><option value="expired">Expired</option></select>
-      </div>
+      <div class="form-group"><label>Channel</label><select id="f-channel"></select></div>
+      <div class="form-group"><label>Status</label><select id="f-status"></select></div>
       <div class="form-group full" style="background:var(--card2);border-radius:10px;padding:14px;border:1px solid var(--border)">
         <label style="color:var(--gold);font-size:13px;margin-bottom:10px;display:block">🚚 Delivery Settings</label>
         <div class="form-grid" style="gap:12px">
@@ -315,135 +433,139 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 <div class="toast" id="toast"></div>
 
 <script>
-// ========== CONFIG ==========
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjE--Kq8ELTH7eB8nIl6-igx_zprjG9ZZHp1LwpSbUyoSzKwFKKfcCGXCrsBmeXtokdw/exec';
 const PASS = 'TB@2026';
 
-let offers = [], prices = [], loyalties = [];
-let editOfferIdx = -1, editPriceIdx = -1, editLoyaltyIdx = -1;
+let offers=[], prices=[], loyalties=[];
+let editOfferIdx=-1, editPriceIdx=-1, editLoyaltyIdx=-1;
 
-// ========== API CALL ==========
-function apiCall(action, data, onSuccess, onError) {
-  const url = SCRIPT_URL + '?action=' + action;
-  const options = {
-    method: data ? 'POST' : 'GET',
-    headers: { 'Content-Type': 'application/json' },
-    body: data ? JSON.stringify(data) : undefined
-  };
-  // For GET requests (load data)
-  if (!data) {
-    fetch(SCRIPT_URL + '?v=' + Date.now())
-      .then(r => r.json())
-      .then(onSuccess)
-      .catch(onError);
-  } else {
-    fetch(SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ action, data })
-    })
-    .then(r => r.json())
-    .then(onSuccess)
-    .catch(onError);
-  }
-}
+// DEFAULT SETTINGS
+const defaultSettings = {
+  categories:[
+    {icon:'🎉',name:'New Year Sale',month:'January'},{icon:'💝',name:'Valentine Sale',month:'February'},
+    {icon:'🌸',name:'Spring Collection',month:'March'},{icon:'🎊',name:'Noboborsho Sale',month:'April'},
+    {icon:'🌙',name:'Ramadan Sale',month:'Mar-Apr'},{icon:'🕌',name:'Eid Sale',month:'Apr/Jun'},
+    {icon:'☀️',name:'Summer Sale',month:'June'},{icon:'🔥',name:'Mid-Year Flash',month:'July'},
+    {icon:'📚',name:'Back to College',month:'September'},{icon:'🍂',name:'Autumn Sale',month:'October'},
+    {icon:'💥',name:'Black Friday',month:'November'},{icon:'🎄',name:'Christmas Sale',month:'December'},
+    {icon:'⚡',name:'Flash Sale',month:'Any'},{icon:'🎁',name:'Bundle Offer',month:'Any'},
+    {icon:'📦',name:'Regular Offer',month:'Any'}
+  ],
+  discountTypes:['Percent OFF','Fixed Price','Bundle','Combo','Volume / Tiered','Free Delivery','BOGO','Loyalty','Cashback'],
+  channels:['Website','Inbox','Office','Website + Inbox','All Channels'],
+  deliveryRules:['Buy 2 = Free Delivery','৳1499+ = Free Delivery','৳2000+ = Free Delivery','Bundle = Free Delivery'],
+  statusTypes:['active','scheduled','inactive','expired']
+};
+
+let settings = JSON.parse(localStorage.getItem('tb_settings')||'null') || defaultSettings;
 
 // ========== AUTH ==========
-function checkPass() {
-  const p = document.getElementById('pass-input').value;
-  if (p === PASS) {
+function checkPass(){
+  if(document.getElementById('pass-input').value===PASS){
     sessionStorage.setItem('tb_auth','yes');
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+    document.getElementById('lock-screen').style.display='none';
+    document.getElementById('app').style.display='block';
     loadData();
   } else {
-    document.getElementById('pass-error').style.display = 'block';
+    document.getElementById('pass-error').style.display='block';
   }
 }
-document.addEventListener('keypress', e => { if(e.key==='Enter') checkPass(); });
+document.addEventListener('keypress',e=>{if(e.key==='Enter')checkPass();});
 
-// ========== LOAD DATA ==========
-function loadData() {
-  showToast('⏳ Loading...');
-  // Use JSONP to avoid CORS issue
-  const callbackName = 'tbCallback_' + Date.now();
-  window[callbackName] = function(d) {
-    offers = d.offers || [];
-    prices = d.prices || [];
-    loyalties = d.loyalties || [];
-    renderAll();
-    showToast('✅ Data loaded!');
-    delete window[callbackName];
-    document.getElementById('jsonp-script') && document.getElementById('jsonp-script').remove();
-  };
-  const script = document.createElement('script');
-  script.id = 'jsonp-script';
-  script.src = SCRIPT_URL + '?callback=' + callbackName + '&v=' + Date.now();
-  script.onerror = () => showToast('❌ Load error');
-  document.body.appendChild(script);
-}
-
-// ========== SAVE ==========
-function saveToSheet(action, payload) {
-  // Use JSONP for save too
-  const callbackName = 'tbSave_' + Date.now();
-  window[callbackName] = function(d) {
-    showToast(d.status === 'ok' ? '✅ Saved!' : '❌ Error!');
-    delete window[callbackName];
-    const s = document.getElementById(callbackName);
-    if(s) s.remove();
-  };
-  const script = document.createElement('script');
-  script.id = callbackName;
-  const encoded = encodeURIComponent(JSON.stringify(payload));
-  script.src = SCRIPT_URL + '?callback=' + callbackName + '&action=' + action + '&data=' + encoded;
-  document.body.appendChild(script);
-}
-
-// ========== INIT ==========
-window.onload = function() {
-  document.getElementById('loading-screen').style.display = 'none';
-  if (sessionStorage.getItem('tb_auth') === 'yes') {
-    document.getElementById('lock-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+window.onload=function(){
+  if(sessionStorage.getItem('tb_auth')==='yes'){
+    document.getElementById('lock-screen').style.display='none';
+    document.getElementById('app').style.display='block';
     loadData();
-  } else {
-    document.getElementById('lock-screen').style.display = 'flex';
   }
 };
 
-// ========== TOAST ==========
-function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+// ========== HELPERS ==========
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function fmtDate(d){
+  if(!d||d==='—'||d==='')return'—';
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const parsed=new Date(d);
+  if(!isNaN(parsed.getTime()))return parsed.getDate()+' '+months[parsed.getMonth()]+' '+parsed.getFullYear();
+  return d;
+}
+
+function statusBadge(s){
+  const m={active:'badge-active',inactive:'badge-inactive',scheduled:'badge-scheduled',expired:'badge-expired'};
+  return`<span class="badge ${m[s]||'badge-inactive'}">${(s||'').charAt(0).toUpperCase()+(s||'').slice(1)}</span>`;
+}
+
+function delBadge(o){
+  if(o['Free Delivery']==='yes')return`<span class="badge-del-yes">FREE 🚚</span>`;
+  if(o['Free Delivery']==='conditional')return`<span class="badge-del-yes">Cond.FREE 🚚</span>`;
+  return`<span class="badge-del-no">Paid</span>`;
+}
+
+// ========== LOAD DATA ==========
+function loadData(){
+  showToast('⏳ Loading...');
+  const cb='tbCb_'+Date.now();
+  window[cb]=function(d){
+    offers=d.offers||[];prices=d.prices||[];loyalties=d.loyalties||[];
+    renderAll();showToast('✅ Loaded!');
+    delete window[cb];
+    const s=document.getElementById(cb);if(s)s.remove();
+  };
+  const script=document.createElement('script');
+  script.id=cb;
+  script.src=SCRIPT_URL+'?callback='+cb+'&v='+Date.now();
+  script.onerror=()=>showToast('❌ Load error');
+  document.body.appendChild(script);
+}
+
+function saveToSheet(action,payload){
+  const cb='tbSave_'+Date.now();
+  window[cb]=function(d){
+    showToast(d.status==='ok'?'✅ Saved!':'❌ Error!');
+    delete window[cb];const s=document.getElementById(cb);if(s)s.remove();
+  };
+  const script=document.createElement('script');
+  script.id=cb;
+  const data=encodeURIComponent(JSON.stringify(payload));
+  script.src=SCRIPT_URL+'?callback='+cb+'&action='+action+'&data='+data;
+  script.onerror=()=>showToast('❌ Save error');
+  document.body.appendChild(script);
 }
 
 // ========== TABS ==========
-function switchTab(tab) {
-  const tabs = ['all','prices','website','inbox','office','loyalty'];
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+function switchTab(tab){
+  const tabs=['all','website','inbox','office','seasonal','loyalty','prices','settings'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',tabs[i]===tab));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='settings')renderSettings();
   renderAll();
 }
 
-// ========== RENDER ==========
-function renderAll() {
+// ========== RENDER ALL ==========
+function renderAll(){
   renderStats();
   filterOffers();
-  renderTable('web-tbody', offers.filter(o=>(o['Channel']||'').includes('Website')), 'web');
-  renderTable('inbox-tbody', offers.filter(o=>(o['Channel']||'').includes('Inbox')), 'inbox');
-  renderTable('office-tbody', offers.filter(o=>(o['Channel']||'').includes('Office')), 'office');
-  renderPrices(prices);
-  renderLoyalty();
+  filterTab('web');
+  filterTab('inbox');
+  filterTab('office');
+  filterTab('season');
+  filterLoyalty();
+  filterPrices();
+  renderSeasonIcons();
+  populateDropdowns();
 }
 
-function renderStats() {
-  const active = offers.filter(o=>o['Status']==='active').length;
-  const scheduled = offers.filter(o=>o['Status']==='scheduled').length;
-  const freeDel = offers.filter(o=>o['Free Delivery']==='yes'||o['Free Delivery']==='conditional').length;
-  document.getElementById('stats-row').innerHTML = `
+function renderStats(){
+  const active=offers.filter(o=>o['Status']==='active').length;
+  const scheduled=offers.filter(o=>o['Status']==='scheduled').length;
+  const freeDel=offers.filter(o=>o['Free Delivery']==='yes'||o['Free Delivery']==='conditional').length;
+  document.getElementById('stats-row').innerHTML=`
     <div class="stat-card"><div class="stat-label">Total Offers</div><div class="stat-value">${offers.length}</div></div>
     <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value" style="color:var(--green)">${active}</div></div>
     <div class="stat-card"><div class="stat-label">Scheduled</div><div class="stat-value" style="color:var(--blue)">${scheduled}</div></div>
@@ -452,61 +574,255 @@ function renderStats() {
     <div class="stat-card"><div class="stat-label">Inbox</div><div class="stat-value">${offers.filter(o=>(o['Channel']||'').includes('Inbox')).length}</div></div>`;
 }
 
-function statusBadge(s) {
-  const m={active:'badge-active',inactive:'badge-inactive',scheduled:'badge-scheduled',expired:'badge-expired'};
-  return `<span class="badge ${m[s]||'badge-inactive'}">${(s||'').charAt(0).toUpperCase()+(s||'').slice(1)}</span>`;
-}
-function delBadge(o) {
-  if(o['Free Delivery']==='yes') return `<span class="badge-del-yes">FREE 🚚</span>`;
-  if(o['Free Delivery']==='conditional') return `<span class="badge-del-yes">Cond.FREE 🚚</span>`;
-  return `<span class="badge-del-no">Paid</span>`;
-}
-
-function filterOffers() {
+// ========== FILTERS ==========
+function filterOffers(){
   const search=(document.getElementById('search-input').value||'').toLowerCase();
   const status=document.getElementById('filter-status').value;
+  const type=document.getElementById('filter-type').value;
   const channel=document.getElementById('filter-channel').value;
   const delivery=document.getElementById('filter-delivery').value;
   const filtered=offers.filter(o=>
     (!search||(o['Offer Name']||'').toLowerCase().includes(search)||(o['Products']||'').toLowerCase().includes(search)||(o['Code']||'').toLowerCase().includes(search))
     &&(!status||o['Status']===status)
+    &&(!type||o['Discount Type']===type)
     &&(!channel||(o['Channel']||'').includes(channel))
     &&(!delivery||(delivery==='yes'?(o['Free Delivery']==='yes'||o['Free Delivery']==='conditional'):(o['Free Delivery']==='no')))
   );
   renderTable('offers-tbody',filtered,'all');
 }
 
-function renderTable(tbodyId,data,type) {
+function filterTab(tab){
+  let data,tbodyId,type2,searchId,statusId,typeId,deliveryId;
+  if(tab==='web'){
+    data=offers.filter(o=>(o['Channel']||'').includes('Website'));
+    tbodyId='web-tbody';type2='web';searchId='web-search';statusId='web-status';typeId='web-type';deliveryId='web-delivery';
+  } else if(tab==='inbox'){
+    data=offers.filter(o=>(o['Channel']||'').includes('Inbox'));
+    tbodyId='inbox-tbody';type2='inbox';searchId='inbox-search';statusId='inbox-status';typeId='inbox-type';deliveryId='inbox-delivery';
+  } else if(tab==='office'){
+    data=offers.filter(o=>(o['Channel']||'').includes('Office'));
+    tbodyId='office-tbody';type2='office';searchId='office-search';statusId='office-status';typeId='office-type';deliveryId='office-delivery';
+  } else if(tab==='season'){
+    data=offers.filter(o=>o['Season']&&o['Season']!=='Regular Offer');
+    tbodyId='season-tbody';type2='season';searchId='season-search';statusId='season-status';
+  }
+  const search=(document.getElementById(searchId)?.value||'').toLowerCase();
+  const status=document.getElementById(statusId)?.value||'';
+  const type=typeId?document.getElementById(typeId)?.value||'':'';
+  const delivery=deliveryId?document.getElementById(deliveryId)?.value||'':'';
+  const filtered=data.filter(o=>
+    (!search||(o['Offer Name']||'').toLowerCase().includes(search)||(o['Products']||'').toLowerCase().includes(search))
+    &&(!status||o['Status']===status)
+    &&(!type||o['Discount Type']===type)
+    &&(!delivery||(delivery==='yes'?(o['Free Delivery']==='yes'||o['Free Delivery']==='conditional'):(o['Free Delivery']==='no')))
+  );
+  renderTable(tbodyId,filtered,type2);
+}
+
+function filterLoyalty(){
+  const search=(document.getElementById('loyalty-search')?.value||'').toLowerCase();
+  const status=document.getElementById('loyalty-status')?.value||'';
+  const filtered=loyalties.filter(l=>
+    (!search||(l.name||'').toLowerCase().includes(search)||(l.desc||'').toLowerCase().includes(search))
+    &&(!status||l.status===status)
+  );
+  renderLoyaltyCards(filtered);
+}
+
+function filterPrices(){
+  const search=(document.getElementById('price-search')?.value||'').toLowerCase();
+  const status=document.getElementById('price-status')?.value||'';
+  const platform=document.getElementById('price-platform')?.value||'';
+  const filtered=prices.filter(p=>
+    (!search||(p['Product Name']||'').toLowerCase().includes(search)||(p['SKU']||'').toLowerCase().includes(search))
+    &&(!status||p['Status']===status)
+    &&(!platform||(p['Platform']||'').includes(platform))
+  );
+  renderPricesTable(filtered);
+}
+
+// ========== RENDER TABLES ==========
+function renderTable(tbodyId,data,type){
   const tbody=document.getElementById(tbodyId);
   if(!tbody)return;
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="20"><div class="empty"><div class="empty-icon">📭</div>No offers</div></td></tr>`;return;}
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="20"><div class="empty"><div class="empty-icon">📭</div>No offers found</div></td></tr>`;return;}
   tbody.innerHTML=data.map(o=>{
     const i=offers.indexOf(o);
     const fd=o['Free Delivery']==='yes'||o['Free Delivery']==='conditional';
     const rc=fd?'del-free-row':'';
-    const n=o['Offer Name']||'', co=o['Code']||'', se=o['Season']||'—', pr=o['Products']||'—';
-    const sk=o['SKU']||'—', re=o['Regular Price']?'৳'+o['Regular Price']:'—';
-    const of=o['Offer Price']?'৳'+o['Offer Price']:'—', ty=o['Discount Type']||'—';
-    const di=o['Discount']||'—', ch=o['Channel']||'—', st=o['Status']||'—';
-    const s=o['Start']||'—', e=o['End']||'—', no=o['Notes']||'—';
+    const n=o['Offer Name']||'',co=o['Code']||'',se=o['Season']||'—',pr=o['Products']||'—';
+    const sk=o['SKU']||'—',re=o['Regular Price']?'৳'+o['Regular Price']:'—';
+    const of=o['Offer Price']?'৳'+o['Offer Price']:'—',ty=o['Discount Type']||'—';
+    const di=o['Discount']||'—',ch=o['Channel']||'—',st=o['Status']||'active';
+    const s=fmtDate(o['Start']),e=fmtDate(o['End']),no=o['Notes']||'—';
     const ac=`<div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div>`;
-    if(type==='all') return `<tr class="${rc}"><td><strong>${n}</strong>${co?`<br><small style="color:var(--gold);font-size:11px">🏷 ${co}</small>`:''}</td><td>${se}</td><td style="white-space:normal;font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td>${re}</td><td style="color:var(--gold)">${of}</td><td><span class="badge-type">${ty}</span></td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td><span class="badge-channel">${ch}</span></td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
-    if(type==='web') return `<tr class="${rc}"><td><strong>${n}</strong></td><td>${se}</td><td style="color:var(--gold)">${co||'—'}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
-    if(type==='inbox') return `<tr class="${rc}"><td><strong>${n}</strong></td><td>${se}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td style="font-size:12px;color:var(--text-muted);white-space:normal">${no}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
-    if(type==='office') return `<tr class="${rc}"><td><strong>${n}</strong></td><td>${se}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td style="font-size:12px;color:var(--text-muted)">${no}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
-    return '';
+    if(type==='all')return`<tr class="${rc}"><td><strong>${n}</strong>${co?`<br><small style="color:var(--gold);font-size:11px">🏷 ${co}</small>`:''}</td><td style="font-size:12px">${se}</td><td style="white-space:normal;font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td>${re}</td><td style="color:var(--gold)">${of}</td><td><span class="badge-type">${ty}</span></td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td><span class="badge-channel">${ch}</span></td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='web')return`<tr class="${rc}"><td><strong>${n}</strong></td><td style="font-size:12px">${se}</td><td style="color:var(--gold)">${co||'—'}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='inbox')return`<tr class="${rc}"><td><strong>${n}</strong></td><td style="font-size:12px">${se}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td style="font-size:12px;color:var(--text-muted);white-space:normal">${no}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='office')return`<tr class="${rc}"><td><strong>${n}</strong></td><td style="font-size:12px">${se}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td style="font-size:12px;color:var(--text-muted)">${no}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='season')return`<tr class="${rc}"><td style="font-size:12px">${se}</td><td><strong>${n}</strong></td><td style="font-size:12px">${pr}</td><td><span class="badge-type">${ty}</span></td><td style="color:var(--gold);font-weight:600">${di}</td><td style="color:var(--gold)">${co||'—'}</td><td>${delBadge(o)}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s} → ${e}</td><td>${ac}</td></tr>`;
+    return'';
   }).join('');
 }
 
+function renderSeasonIcons(){
+  const el=document.getElementById('season-icons');
+  if(!el)return;
+  el.innerHTML=settings.categories.filter(c=>c.name!=='Regular Offer').map(c=>{
+    const count=offers.filter(o=>o['Season']===c.name).length;
+    return`<div class="season-card" onclick="filterBySeasonCard('${c.name}')">
+      <div class="season-icon">${c.icon||'🏷'}</div>
+      <div class="season-name">${c.name}</div>
+      <div class="season-month">${c.month||'Any'}</div>
+      <div class="season-count" style="color:${count>0?'var(--green)':'var(--text-muted)'}">${count>0?count+' offer'+(count>1?'s':''):'No offers'}</div>
+    </div>`;
+  }).join('');
+}
+
+function filterBySeasonCard(season){
+  const data=offers.filter(o=>o['Season']===season);
+  renderTable('season-tbody',data,'season');
+}
+
+// ========== LOYALTY ==========
+function renderLoyaltyCards(data){
+  const grid=document.getElementById('loyalty-grid');
+  if(!grid)return;
+  if(!data.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⭐</div>No loyalty offers</div>`;return;}
+  const sc={active:'var(--green)',planned:'var(--orange)',inactive:'var(--text-muted)'};
+  const sl={active:'● Active',planned:'● Planned',inactive:'● Inactive'};
+  grid.innerHTML=data.map(l=>{
+    const i=loyalties.indexOf(l);
+    return`<div class="loyalty-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+        <h3 style="display:flex;align-items:center;gap:8px;margin-bottom:0"><span style="font-size:22px">${l.icon||'⭐'}</span>${l.name||''}</h3>
+        <div style="display:flex;gap:6px"><button class="btn-icon" onclick="editLoyalty(${i})">✏️</button><button class="btn-icon" style="color:var(--red)" onclick="deleteLoyalty(${i})">🗑</button></div>
+      </div>
+      <p>${l.desc||''}</p>
+      <div class="loyalty-reward"><span>Reward</span><span>${l.reward||'—'}</span></div>
+      <div class="loyalty-reward"><span>Code</span><span>${l.code||'—'}</span></div>
+      <div class="loyalty-reward"><span>Trigger</span><span>${l.trigger||'—'}</span></div>
+      <div class="loyalty-reward"><span>Status</span><span style="color:${sc[l.status]||'var(--text-muted)'}">${sl[l.status]||l.status}</span></div>
+      ${l.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding:8px;background:var(--card2);border-radius:6px">${l.notes}</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+// ========== PRICES ==========
+function renderPricesTable(data){
+  const tbody=document.getElementById('prices-tbody');
+  if(!tbody)return;
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="empty-icon">🏷</div>No products</div></td></tr>`;return;}
+  tbody.innerHTML=data.map(p=>{
+    const i=prices.indexOf(p);
+    const reg=parseFloat(p['Regular Price'])||0,sale=parseFloat(p['Sale Price'])||0;
+    const dA=reg&&sale&&sale<reg?reg-sale:0,dP=reg&&dA?((dA/reg)*100).toFixed(1):0;
+    const sb=p['Status']==='sale'?`<span class="badge badge-active">On Sale</span>`:p['Status']==='discontinued'?`<span class="badge badge-expired">Discontinued</span>`:`<span class="badge badge-inactive">Regular</span>`;
+    return`<tr><td><strong>${p['Product Name']||'—'}</strong></td><td style="font-size:12px;color:var(--text-muted)">${p['SKU']||'—'}</td><td><span class="badge-type">${p['Category']||'—'}</span></td><td>${reg?'৳'+reg:'—'}</td><td style="color:var(--gold);font-weight:600">${sale?'৳'+sale:'—'}</td><td style="color:${dP>0?'var(--green)':'var(--text-muted)'};font-weight:600">${dP>0?dP+'%':'—'}</td><td style="color:${dA>0?'var(--green)':'var(--text-muted)'};font-weight:600">${dA>0?'৳'+dA:'—'}</td><td><span class="badge-channel">${p['Platform']||'—'}</span></td><td>${sb}</td><td style="font-size:12px">${fmtDate(p['Start'])}</td><td style="font-size:12px">${fmtDate(p['End'])}</td><td style="font-size:11px;color:var(--text-muted)">${p['Note']||'—'}</td><td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editPrice(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deletePrice(${i})">Del</button></div></td></tr>`;
+  }).join('');
+}
+
+// ========== SETTINGS ==========
+function renderSettings(){
+  renderSettingsList('categories','cat-list');
+  renderSettingsList('discountTypes','dtype-list');
+  renderSettingsList('channels','channel-list');
+  renderSettingsList('deliveryRules','delivery-list');
+  renderSettingsList('statusTypes','status-list');
+}
+
+function renderSettingsList(key,listId){
+  const list=document.getElementById(listId);
+  if(!list)return;
+  if(key==='categories'){
+    list.innerHTML=settings.categories.map((c,i)=>`
+      <div class="settings-item">
+        <span style="display:flex;align-items:center;gap:8px"><span style="font-size:16px">${c.icon||'🏷'}</span><span><div style="font-size:13px;font-weight:500">${c.name}</div><div style="font-size:11px;color:var(--text-muted)">${c.month||'Any'}</div></span></span>
+        <button class="btn-icon" style="color:var(--red)" onclick="deleteSetting('categories',${i},'cat-list')">🗑</button>
+      </div>`).join('');
+    return;
+  }
+  const items=settings[key]||[];
+  list.innerHTML=items.map((item,i)=>`
+    <div class="settings-item">
+      <span>${item}</span>
+      <button class="btn-icon" style="color:var(--red)" onclick="deleteSetting('${key}',${i},'${listId}')">🗑</button>
+    </div>`).join('');
+}
+
+function addCategory(){
+  const icon=document.getElementById('cat-emoji').value.trim()||'🏷';
+  const name=document.getElementById('cat-name').value.trim();
+  const month=document.getElementById('cat-month').value.trim()||'Any';
+  if(!name){showToast('❌ Name required!');return;}
+  settings.categories.push({icon,name,month});
+  localStorage.setItem('tb_settings',JSON.stringify(settings));
+  document.getElementById('cat-emoji').value='';
+  document.getElementById('cat-name').value='';
+  document.getElementById('cat-month').value='';
+  renderSettingsList('categories','cat-list');
+  populateDropdowns();
+  renderSeasonIcons();
+  showToast('✅ Added!');
+}
+
+function addSetting(key,inputId,listId){
+  const val=document.getElementById(inputId).value.trim();
+  if(!val)return;
+  if(!settings[key])settings[key]=[];
+  if(settings[key].includes(val)){showToast('Already exists!');return;}
+  settings[key].push(val);
+  localStorage.setItem('tb_settings',JSON.stringify(settings));
+  document.getElementById(inputId).value='';
+  renderSettingsList(key,listId);
+  populateDropdowns();
+  showToast('✅ Added!');
+}
+
+function deleteSetting(key,idx,listId){
+  if(!confirm('Delete this?'))return;
+  if(key==='categories')settings.categories.splice(idx,1);
+  else settings[key].splice(idx,1);
+  localStorage.setItem('tb_settings',JSON.stringify(settings));
+  renderSettingsList(key,listId);
+  populateDropdowns();
+  showToast('🗑 Deleted!');
+}
+
+// ========== DROPDOWNS ==========
+function populateDropdowns(){
+  const seasons=settings.categories.map(c=>`<option value="${c.name}">${c.icon||''} ${c.name}</option>`).join('');
+  const types=settings.discountTypes.map(d=>`<option>${d}</option>`).join('');
+  const channels=settings.channels.map(c=>`<option>${c}</option>`).join('');
+  const statuses=settings.statusTypes.map(s=>`<option value="${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('');
+
+  const fSeason=document.getElementById('f-season');
+  if(fSeason)fSeason.innerHTML=`<option value="">— Select Season —</option>`+seasons;
+  const fType=document.getElementById('f-type');
+  if(fType)fType.innerHTML=`<option value="">— Select Type —</option>`+types;
+  const fChannel=document.getElementById('f-channel');
+  if(fChannel)fChannel.innerHTML=`<option value="">— Select Channel —</option>`+channels;
+  const fStatus=document.getElementById('f-status');
+  if(fStatus)fStatus.innerHTML=statuses;
+
+  // Filter dropdowns
+  ['filter-type','web-type','inbox-type','office-type'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.innerHTML=`<option value="">All Types</option>`+types;
+  });
+  ['filter-channel'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.innerHTML=`<option value="">All Channels</option>`+channels;
+  });
+}
+
 // ========== OFFER CRUD ==========
-function openModal(idx=-1) {
+function openModal(idx=-1){
   editOfferIdx=idx;
+  populateDropdowns();
   document.getElementById('modal-title').textContent=idx===-1?'New Offer':'Edit Offer';
-  ['f-name','f-season','f-code','f-products','f-sku','f-regular','f-offer','f-discount','f-start','f-end','f-notes','f-min-order','f-del-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('f-status').value='active';
+  ['f-name','f-code','f-products','f-sku','f-regular','f-offer','f-discount','f-start','f-end','f-notes','f-min-order','f-del-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   document.getElementById('f-free-del').value='no';
-  document.getElementById('f-type').value='';
-  document.getElementById('f-channel').value='';
   if(idx!==-1){
     const o=offers[idx];
     document.getElementById('f-name').value=o['Offer Name']||'';
@@ -537,13 +853,13 @@ function saveOffer(){
   const o={'Offer Name':name,'Season':document.getElementById('f-season').value,'Code':document.getElementById('f-code').value,'Products':document.getElementById('f-products').value,'SKU':document.getElementById('f-sku').value,'Regular Price':document.getElementById('f-regular').value,'Offer Price':document.getElementById('f-offer').value,'Discount Type':document.getElementById('f-type').value,'Discount':document.getElementById('f-discount').value,'Channel':document.getElementById('f-channel').value||'Website','Status':document.getElementById('f-status').value,'Start':document.getElementById('f-start').value,'End':document.getElementById('f-end').value,'Notes':document.getElementById('f-notes').value,'Free Delivery':document.getElementById('f-free-del').value,'Min Order':document.getElementById('f-min-order').value,'Delivery Note':document.getElementById('f-del-note').value};
   if(editOfferIdx===-1)offers.push(o);else offers[editOfferIdx]=o;
   closeModal();renderAll();
-  saveToSheet('saveOffers', offers);
+  saveToSheet('saveOffers',offers);
 }
 function editOffer(i){openModal(i);}
 function deleteOffer(i){
   if(!confirm(`Delete "${offers[i]['Offer Name']}"?`))return;
   offers.splice(i,1);renderAll();
-  saveToSheet('saveOffers', offers);
+  saveToSheet('saveOffers',offers);
 }
 
 // ========== PRICE CRUD ==========
@@ -553,24 +869,27 @@ function calcDiscount(){
   if(reg>0&&sale>0&&sale<reg){const amt=reg-sale;document.getElementById('p-disc-pct').value=((amt/reg)*100).toFixed(1)+'%';document.getElementById('p-disc-amt').value='৳'+amt;}
   else{document.getElementById('p-disc-pct').value='';document.getElementById('p-disc-amt').value='';}
 }
-function renderPrices(data){
-  const tbody=document.getElementById('prices-tbody');
-  if(!tbody)return;
-  if(!data.length){tbody.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="empty-icon">🏷</div>No products</div></td></tr>`;return;}
-  tbody.innerHTML=data.map((p,i)=>{
-    const reg=parseFloat(p['Regular Price'])||0,sale=parseFloat(p['Sale Price'])||0;
-    const dA=reg&&sale&&sale<reg?reg-sale:0,dP=reg&&dA?((dA/reg)*100).toFixed(1):0;
-    const sb=p['Status']==='sale'?`<span class="badge badge-active">On Sale</span>`:p['Status']==='discontinued'?`<span class="badge badge-expired">Discontinued</span>`:`<span class="badge badge-inactive">Regular</span>`;
-    return `<tr><td><strong>${p['Product Name']||'—'}</strong></td><td style="font-size:12px;color:var(--text-muted)">${p['SKU']||'—'}</td><td><span class="badge-type">${p['Category']||'—'}</span></td><td>${reg?'৳'+reg:'—'}</td><td style="color:var(--gold);font-weight:600">${sale?'৳'+sale:'—'}</td><td style="color:${dP>0?'var(--green)':'var(--text-muted)'};font-weight:600">${dP>0?dP+'%':'—'}</td><td style="color:${dA>0?'var(--green)':'var(--text-muted)'};font-weight:600">${dA>0?'৳'+dA:'—'}</td><td><span class="badge-channel">${p['Platform']||'—'}</span></td><td>${sb}</td><td style="font-size:12px">${p['Start']||'—'}</td><td style="font-size:12px">${p['End']||'—'}</td><td style="font-size:11px;color:var(--text-muted)">${p['Note']||'—'}</td><td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editPrice(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deletePrice(${i})">Del</button></div></td></tr>`;
-  }).join('');
-}
+
 function openPriceModal(idx=-1){
   editPriceIdx=idx;
   document.getElementById('price-modal-title').textContent=idx===-1?'Add Product Price':'Edit Product Price';
   ['p-name','p-sku','p-cat','p-regular','p-sale','p-note','p-start','p-end'].forEach(id=>{document.getElementById(id).value='';});
   document.getElementById('p-disc-pct').value='';document.getElementById('p-disc-amt').value='';
   document.getElementById('p-status').value='sale';document.getElementById('p-platform').value='All Platforms';
-  if(idx!==-1){const p=prices[idx];document.getElementById('p-name').value=p['Product Name']||'';document.getElementById('p-sku').value=p['SKU']||'';document.getElementById('p-cat').value=p['Category']||'';document.getElementById('p-regular').value=p['Regular Price']||'';document.getElementById('p-sale').value=p['Sale Price']||'';document.getElementById('p-platform').value=p['Platform']||'All Platforms';document.getElementById('p-status').value=p['Status']||'sale';document.getElementById('p-start').value=p['Start']||'';document.getElementById('p-end').value=p['End']||'';document.getElementById('p-note').value=p['Note']||'';calcDiscount();}
+  if(idx!==-1){
+    const p=prices[idx];
+    document.getElementById('p-name').value=p['Product Name']||'';
+    document.getElementById('p-sku').value=p['SKU']||'';
+    document.getElementById('p-cat').value=p['Category']||'';
+    document.getElementById('p-regular').value=p['Regular Price']||'';
+    document.getElementById('p-sale').value=p['Sale Price']||'';
+    document.getElementById('p-platform').value=p['Platform']||'All Platforms';
+    document.getElementById('p-status').value=p['Status']||'sale';
+    document.getElementById('p-start').value=p['Start']||'';
+    document.getElementById('p-end').value=p['End']||'';
+    document.getElementById('p-note').value=p['Note']||'';
+    calcDiscount();
+  }
   document.getElementById('price-modal').classList.add('open');
 }
 function closePriceModal(){document.getElementById('price-modal').classList.remove('open');}
@@ -579,27 +898,25 @@ function savePrice(){
   if(!name){showToast('❌ Product name required!');return;}
   const p={'Product Name':name,'SKU':document.getElementById('p-sku').value,'Category':document.getElementById('p-cat').value,'Regular Price':document.getElementById('p-regular').value,'Sale Price':document.getElementById('p-sale').value,'Platform':document.getElementById('p-platform').value,'Status':document.getElementById('p-status').value,'Start':document.getElementById('p-start').value,'End':document.getElementById('p-end').value,'Note':document.getElementById('p-note').value};
   if(editPriceIdx===-1)prices.push(p);else prices[editPriceIdx]=p;
-  closePriceModal();renderPrices(prices);
-  saveToSheet('savePrices', prices);
+  closePriceModal();filterPrices();
+  saveToSheet('savePrices',prices);
 }
 function editPrice(i){openPriceModal(i);}
-function deletePrice(i){if(!confirm(`Delete "${prices[i]['Product Name']}"?`))return;prices.splice(i,1);renderPrices(prices);saveToSheet('savePrices',prices);}
+function deletePrice(i){if(!confirm(`Delete "${prices[i]['Product Name']}"?`))return;prices.splice(i,1);filterPrices();saveToSheet('savePrices',prices);}
 
 // ========== LOYALTY CRUD ==========
-function renderLoyalty(){
-  const grid=document.getElementById('loyalty-grid');
-  if(!grid)return;
-  if(!loyalties.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⭐</div>No loyalty offers</div>`;return;}
-  const sc={active:'var(--green)',planned:'var(--orange)',inactive:'var(--text-muted)'};
-  const sl={active:'● Active',planned:'● Planned',inactive:'● Inactive'};
-  grid.innerHTML=loyalties.map((l,i)=>`<div class="loyalty-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h3 style="display:flex;align-items:center;gap:8px;margin-bottom:0"><span style="font-size:22px">${l.icon||'⭐'}</span>${l.name||''}</h3><div style="display:flex;gap:6px"><button class="btn-icon" onclick="editLoyalty(${i})">✏️</button><button class="btn-icon" style="color:var(--red)" onclick="deleteLoyalty(${i})">🗑</button></div></div><p>${l.desc||''}</p><div class="loyalty-reward"><span>Reward</span><span>${l.reward||'—'}</span></div><div class="loyalty-reward"><span>Code</span><span>${l.code||'—'}</span></div><div class="loyalty-reward"><span>Trigger</span><span>${l.trigger||'—'}</span></div><div class="loyalty-reward"><span>Status</span><span style="color:${sc[l.status]||'var(--text-muted)'}">${sl[l.status]||l.status}</span></div>${l.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding:8px;background:var(--card2);border-radius:6px">${l.notes}</div>`:''}</div>`).join('');
-}
 function openLoyaltyModal(idx=-1){
   editLoyaltyIdx=idx;
   document.getElementById('loyalty-modal-title').textContent=idx===-1?'Add Loyalty Offer':'Edit Loyalty Offer';
   ['l-icon','l-name','l-desc','l-reward','l-code','l-trigger','l-notes'].forEach(id=>{document.getElementById(id).value='';});
   document.getElementById('l-status').value='active';
-  if(idx!==-1){const l=loyalties[idx];document.getElementById('l-icon').value=l.icon||'';document.getElementById('l-name').value=l.name||'';document.getElementById('l-desc').value=l.desc||'';document.getElementById('l-reward').value=l.reward||'';document.getElementById('l-code').value=l.code||'';document.getElementById('l-trigger').value=l.trigger||'';document.getElementById('l-status').value=l.status||'active';document.getElementById('l-notes').value=l.notes||'';}
+  if(idx!==-1){
+    const l=loyalties[idx];
+    document.getElementById('l-icon').value=l.icon||'';document.getElementById('l-name').value=l.name||'';
+    document.getElementById('l-desc').value=l.desc||'';document.getElementById('l-reward').value=l.reward||'';
+    document.getElementById('l-code').value=l.code||'';document.getElementById('l-trigger').value=l.trigger||'';
+    document.getElementById('l-status').value=l.status||'active';document.getElementById('l-notes').value=l.notes||'';
+  }
   document.getElementById('loyalty-modal').classList.add('open');
 }
 function closeLoyaltyModal(){document.getElementById('loyalty-modal').classList.remove('open');}
@@ -608,11 +925,11 @@ function saveLoyalty(){
   if(!name){showToast('❌ Name required!');return;}
   const l={icon:document.getElementById('l-icon').value.trim()||'⭐',name,desc:document.getElementById('l-desc').value,reward:document.getElementById('l-reward').value,code:document.getElementById('l-code').value,trigger:document.getElementById('l-trigger').value,status:document.getElementById('l-status').value,notes:document.getElementById('l-notes').value};
   if(editLoyaltyIdx===-1)loyalties.push(l);else loyalties[editLoyaltyIdx]=l;
-  closeLoyaltyModal();renderLoyalty();
-  saveToSheet('saveLoyalties', loyalties);
+  closeLoyaltyModal();filterLoyalty();
+  saveToSheet('saveLoyalties',loyalties);
 }
 function editLoyalty(i){openLoyaltyModal(i);}
-function deleteLoyalty(i){if(!confirm(`Delete "${loyalties[i].name}"?`))return;loyalties.splice(i,1);renderLoyalty();saveToSheet('saveLoyalties',loyalties);}
+function deleteLoyalty(i){if(!confirm(`Delete "${loyalties[i].name}"?`))return;loyalties.splice(i,1);filterLoyalty();saveToSheet('saveLoyalties',loyalties);}
 
 // ========== EXPORT ==========
 function exportCSV(){

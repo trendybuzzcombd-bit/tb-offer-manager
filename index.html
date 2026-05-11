@@ -364,28 +364,39 @@ document.addEventListener('keypress', e => { if(e.key==='Enter') checkPass(); })
 // ========== LOAD DATA ==========
 function loadData() {
   showToast('⏳ Loading...');
-  fetch(SCRIPT_URL + '?v=' + Date.now())
-    .then(r => r.json())
-    .then(d => {
-      offers = d.offers || [];
-      prices = d.prices || [];
-      loyalties = d.loyalties || [];
-      renderAll();
-      showToast('✅ Data loaded!');
-    })
-    .catch(e => showToast('❌ Load error: ' + e.message));
+  // Use JSONP to avoid CORS issue
+  const callbackName = 'tbCallback_' + Date.now();
+  window[callbackName] = function(d) {
+    offers = d.offers || [];
+    prices = d.prices || [];
+    loyalties = d.loyalties || [];
+    renderAll();
+    showToast('✅ Data loaded!');
+    delete window[callbackName];
+    document.getElementById('jsonp-script') && document.getElementById('jsonp-script').remove();
+  };
+  const script = document.createElement('script');
+  script.id = 'jsonp-script';
+  script.src = SCRIPT_URL + '?callback=' + callbackName + '&v=' + Date.now();
+  script.onerror = () => showToast('❌ Load error');
+  document.body.appendChild(script);
 }
 
 // ========== SAVE ==========
 function saveToSheet(action, payload) {
-  fetch(SCRIPT_URL, {
-    method: 'POST',
-    headers: {'Content-Type':'text/plain'},
-    body: JSON.stringify({ action, data: payload })
-  })
-  .then(r => r.json())
-  .then(d => showToast(d.status === 'ok' ? '✅ Saved!' : '❌ Error!'))
-  .catch(e => showToast('❌ ' + e.message));
+  // Use JSONP for save too
+  const callbackName = 'tbSave_' + Date.now();
+  window[callbackName] = function(d) {
+    showToast(d.status === 'ok' ? '✅ Saved!' : '❌ Error!');
+    delete window[callbackName];
+    const s = document.getElementById(callbackName);
+    if(s) s.remove();
+  };
+  const script = document.createElement('script');
+  script.id = callbackName;
+  const encoded = encodeURIComponent(JSON.stringify(payload));
+  script.src = SCRIPT_URL + '?callback=' + callbackName + '&action=' + action + '&data=' + encoded;
+  document.body.appendChild(script);
 }
 
 // ========== INIT ==========

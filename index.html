@@ -7,12 +7,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --gold: #F2C102; --gold-dark: #d4a800; --black: #0a0a0a; --dark: #111111;
-  --card: #1a1a1a; --card2: #222222; --border: #2a2a2a; --text: #f0f0f0;
-  --text-muted: #888; --green: #2ecc71; --red: #e74c3c; --orange: #f39c12; --blue: #3498db;
+  --gold:#F2C102; --gold-dark:#d4a800; --black:#0a0a0a; --dark:#111111;
+  --card:#1a1a1a; --card2:#222222; --border:#2a2a2a; --text:#f0f0f0;
+  --text-muted:#888; --green:#2ecc71; --red:#e74c3c; --orange:#f39c12; --blue:#3498db;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { background:var(--black); color:var(--text); font-family:'DM Sans',sans-serif; min-height:100vh; }
+
+#loading-screen { position:fixed; inset:0; background:var(--black); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:16px; }
+#loading-screen h1 { font-family:'Playfair Display',serif; color:var(--gold); font-size:28px; }
+#loading-screen p { color:var(--text-muted); font-size:14px; }
+.spinner { width:40px; height:40px; border:3px solid var(--border); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+#lock-screen { position:fixed; inset:0; background:#0a0a0a; z-index:9998; display:flex; align-items:center; justify-content:center; }
+#lock-screen .box { background:#1a1a1a; border:1px solid #2a2a2a; border-radius:16px; padding:32px; width:320px; text-align:center; }
+#lock-screen h1 { font-family:'Playfair Display',serif; font-size:24px; color:#F2C102; margin-bottom:8px; }
+#lock-screen p { font-size:12px; color:#888; margin-bottom:24px; }
+#lock-screen input { width:100%; background:#222; border:1px solid #2a2a2a; border-radius:8px; padding:10px 12px; color:#f0f0f0; font-size:14px; outline:none; margin-bottom:12px; font-family:'DM Sans',sans-serif; }
+#lock-screen button { width:100%; background:#F2C102; color:#000; border:none; border-radius:8px; padding:10px; font-size:14px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif; }
+#pass-error { color:#e74c3c; font-size:12px; margin-top:8px; display:none; }
 
 .header { background:var(--dark); border-bottom:1px solid var(--border); padding:16px 32px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
 .logo { display:flex; align-items:center; gap:12px; }
@@ -28,14 +42,12 @@ body { background:var(--black); color:var(--text); font-family:'DM Sans',sans-se
 .btn-outline:hover { border-color:var(--gold); color:var(--gold); }
 .btn-sm { padding:5px 10px; font-size:12px; }
 .btn-danger { background:var(--red); color:#fff; }
-.btn-danger:hover { background:#c0392b; }
 .btn-icon { background:var(--card2); border:1px solid var(--border); color:var(--text-muted); padding:4px 8px; border-radius:6px; font-size:12px; cursor:pointer; }
 .btn-icon:hover { color:var(--gold); border-color:var(--gold); }
 
 .tabs { display:flex; gap:4px; padding:16px 32px 0; border-bottom:1px solid var(--border); background:var(--dark); overflow-x:auto; }
 .tab { padding:10px 20px; border-radius:8px 8px 0 0; cursor:pointer; font-size:13px; font-weight:500; color:var(--text-muted); border:1px solid transparent; border-bottom:none; white-space:nowrap; transition:all 0.2s; background:transparent; }
 .tab.active { background:var(--card); color:var(--gold); border-color:var(--border); }
-.tab:hover:not(.active) { color:var(--text); }
 
 .main { padding:24px 32px; width:100%; }
 .tab-content { display:none; }
@@ -47,16 +59,15 @@ body { background:var(--black); color:var(--text); font-family:'DM Sans',sans-se
 .stat-value { font-size:24px; font-weight:600; color:var(--gold); }
 
 .filters { display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap; align-items:center; }
-.filter-select, .filter-input { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; }
-.filter-select:focus, .filter-input:focus { border-color:var(--gold); }
+.filter-select,.filter-input { background:var(--card); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; }
 .filter-input { width:220px; }
 
 .table-wrap { background:var(--card); border:1px solid var(--border); border-radius:12px; overflow:hidden; }
 .table-scroll { overflow-x:auto; }
-table { width:100%; border-collapse:collapse; min-width:1100px; table-layout:auto; }
+table { width:100%; border-collapse:collapse; min-width:900px; }
 thead { background:var(--card2); }
-th { padding:12px 14px; text-align:left; font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border); overflow:hidden; text-overflow:ellipsis; }
-td { padding:12px 14px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; overflow:hidden; text-overflow:ellipsis; }
+th { padding:12px 14px; text-align:left; font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; border-bottom:1px solid var(--border); white-space:nowrap; }
+td { padding:12px 14px; font-size:13px; border-bottom:1px solid var(--border); vertical-align:middle; }
 tr:last-child td { border-bottom:none; }
 tr:hover td { background:rgba(242,193,2,0.03); }
 
@@ -70,7 +81,6 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 .badge-del-yes { background:rgba(46,204,113,0.15); color:var(--green); padding:2px 8px; border-radius:4px; font-size:11px; font-weight:600; }
 .badge-del-no { background:rgba(136,136,136,0.1); color:var(--text-muted); padding:2px 8px; border-radius:4px; font-size:11px; }
 
-/* MODAL */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:200; align-items:center; justify-content:center; padding:20px; }
 .modal-overlay.open { display:flex; }
 .modal { background:var(--card); border:1px solid var(--border); border-radius:16px; width:100%; max-width:700px; max-height:92vh; overflow-y:auto; }
@@ -82,25 +92,11 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 .form-group { display:flex; flex-direction:column; gap:6px; }
 .form-group.full { grid-column:1/-1; }
 .form-group label { font-size:12px; font-weight:500; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; }
-.form-group input, .form-group select, .form-group textarea { background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--gold); }
+.form-group input,.form-group select,.form-group textarea { background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:10px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; transition:border-color 0.2s; }
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus { border-color:var(--gold); }
 .form-group textarea { resize:vertical; min-height:70px; }
-.modal-footer { padding:16px 32px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
+.modal-footer { padding:16px 24px; border-top:1px solid var(--border); display:flex; gap:10px; justify-content:flex-end; }
 
-/* SETTINGS */
-.settings-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; }
-.settings-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
-.settings-card h3 { font-family:'Playfair Display',serif; font-size:16px; color:var(--gold); margin-bottom:4px; }
-.settings-card p { font-size:12px; color:var(--text-muted); margin-bottom:16px; }
-.settings-list { display:flex; flex-direction:column; gap:8px; margin-bottom:12px; }
-.settings-item { display:flex; align-items:center; justify-content:space-between; background:var(--card2); border-radius:8px; padding:10px 12px; }
-.settings-item span { font-size:13px; }
-.settings-item-actions { display:flex; gap:6px; }
-.settings-add { display:flex; gap:8px; }
-.settings-add input { flex:1; background:var(--card2); border:1px solid var(--border); border-radius:8px; padding:8px 12px; color:var(--text); font-family:'DM Sans',sans-serif; font-size:13px; outline:none; }
-.settings-add input:focus { border-color:var(--gold); }
-
-/* LOYALTY */
 .loyalty-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
 .loyalty-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; }
 .loyalty-card h3 { font-family:'Playfair Display',serif; font-size:16px; color:var(--gold); margin-bottom:8px; }
@@ -109,25 +105,12 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 .loyalty-reward span:first-child { color:var(--text-muted); }
 .loyalty-reward span:last-child { color:var(--gold); font-weight:600; }
 
-/* SEASON */
-.season-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; margin-bottom:24px; }
-.season-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:14px; cursor:pointer; transition:all 0.2s; }
-.season-card:hover { border-color:var(--gold); background:rgba(242,193,2,0.05); transform:translateY(-2px); }
-.season-name { font-size:13px; font-weight:600; margin-bottom:2px; }
-.season-month { font-size:11px; color:var(--text-muted); }
-
 .section-title { font-family:'Playfair Display',serif; font-size:20px; color:var(--gold); margin-bottom:16px; }
-.section-sub { font-size:13px; color:var(--text-muted); margin-bottom:20px; margin-top:-10px; }
-
 .empty { text-align:center; padding:60px 20px; color:var(--text-muted); }
 .empty-icon { font-size:48px; margin-bottom:12px; }
-
-.toast { position:fixed; bottom:24px; right:24px; background:var(--gold); color:var(--black); padding:12px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:999; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; }
+.toast { position:fixed; bottom:24px; right:24px; background:var(--gold); color:var(--black); padding:12px 20px; border-radius:10px; font-size:13px; font-weight:600; z-index:9999; opacity:0; transform:translateY(10px); transition:all 0.3s; pointer-events:none; }
 .toast.show { opacity:1; transform:translateY(0); }
-
-/* DEL CHARGE HIGHLIGHT */
 .del-free-row td { background:rgba(46,204,113,0.03) !important; }
-
 ::-webkit-scrollbar { width:6px; height:6px; }
 ::-webkit-scrollbar-track { background:var(--dark); }
 ::-webkit-scrollbar-thumb { background:var(--border); border-radius:3px; }
@@ -136,16 +119,31 @@ tr:hover td { background:rgba(242,193,2,0.03); }
 </head>
 <body>
 
+<div id="loading-screen">
+  <div class="spinner"></div>
+  <h1>TrendyBuzz</h1>
+  <p>Loading...</p>
+</div>
+
+<div id="lock-screen" style="display:none">
+  <div class="box">
+    <h1>TrendyBuzz</h1>
+    <p>Offer Management System</p>
+    <input type="password" id="pass-input" placeholder="Password দিন...">
+    <button onclick="checkPass()">ঢুকুন</button>
+    <div id="pass-error">❌ Password ভুল!</div>
+  </div>
+</div>
+
+<div id="app" style="display:none">
 <div class="header">
   <div class="logo">
     <div class="logo-icon">TB</div>
-    <div class="logo-text">
-      <h1>TrendyBuzz</h1>
-      <p>Offer Management System</p>
-    </div>
+    <div class="logo-text"><h1>TrendyBuzz</h1><p>Offer Management System</p></div>
   </div>
   <div class="header-actions">
-    <button class="btn btn-outline" onclick="exportCSV()">⬇ Export CSV</button>
+    <button class="btn btn-outline" onclick="loadData()">🔄 Refresh</button>
+    <button class="btn btn-outline" onclick="exportCSV()">⬇ Export</button>
     <button class="btn btn-gold" onclick="openModal()">+ New Offer</button>
   </div>
 </div>
@@ -156,456 +154,253 @@ tr:hover td { background:rgba(242,193,2,0.03); }
   <div class="tab" onclick="switchTab('website')">🌐 Website</div>
   <div class="tab" onclick="switchTab('inbox')">💬 Inbox</div>
   <div class="tab" onclick="switchTab('office')">🏢 Office</div>
-  <div class="tab" onclick="switchTab('seasonal')">🗓 Seasonal</div>
   <div class="tab" onclick="switchTab('loyalty')">⭐ Loyalty</div>
-  <div class="tab" onclick="switchTab('settings')">⚙️ Settings</div>
 </div>
 
 <div class="main">
-
-  <!-- ALL OFFERS -->
   <div class="tab-content active" id="tab-all">
     <div class="stats-row" id="stats-row"></div>
     <div class="filters">
-      <input class="filter-input" type="text" placeholder="🔍 Search offer..." oninput="filterOffers()" id="search-input">
+      <input class="filter-input" type="text" placeholder="🔍 Search..." oninput="filterOffers()" id="search-input">
       <select class="filter-select" onchange="filterOffers()" id="filter-status">
-        <option value="">All Status</option>
-        <option value="active">Active</option>
-        <option value="scheduled">Scheduled</option>
-        <option value="expired">Expired</option>
-        <option value="inactive">Inactive</option>
+        <option value="">All Status</option><option value="active">Active</option>
+        <option value="scheduled">Scheduled</option><option value="expired">Expired</option><option value="inactive">Inactive</option>
       </select>
-      <select class="filter-select" onchange="filterOffers()" id="filter-type"></select>
-      <select class="filter-select" onchange="filterOffers()" id="filter-channel"></select>
+      <select class="filter-select" onchange="filterOffers()" id="filter-channel">
+        <option value="">All Channels</option><option>Website</option><option>Inbox</option><option>Office</option>
+      </select>
       <select class="filter-select" onchange="filterOffers()" id="filter-delivery">
-        <option value="">All Delivery</option>
-        <option value="yes">Free Delivery</option>
-        <option value="no">Paid Delivery</option>
+        <option value="">All Delivery</option><option value="yes">Free</option><option value="no">Paid</option>
       </select>
     </div>
-    <div class="table-wrap">
-      <div class="table-scroll">
-        <table>
-          <colgroup>
-            <col style="width:220px">
-            <col style="width:140px">
-            <col style="width:180px">
-            <col style="width:140px">
-            <col style="width:95px">
-            <col style="width:95px">
-            <col style="width:120px">
-            <col style="width:140px">
-            <col style="width:150px">
-            <col style="width:100px">
-            <col style="width:140px">
-            <col style="width:100px">
-            <col style="width:110px">
-            <col style="width:110px">
-            <col style="width:120px">
-          </colgroup>
-          <thead><tr>
-            <th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th>
-            <th>Regular ৳</th><th>Offer ৳</th><th>Discount Type</th><th>Discount</th>
-            <th>Delivery</th><th>Min Order</th><th>Channel</th><th>Status</th>
-            <th>Start</th><th>End</th><th>Actions</th>
-          </tr></thead>
-          <tbody id="offers-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+    <div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Regular ৳</th><th>Offer ৳</th><th>Type</th><th>Discount</th><th>Delivery</th><th>Channel</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+      <tbody id="offers-tbody"></tbody>
+    </table></div></div>
   </div>
 
-  <!-- WEBSITE -->
   <div class="tab-content" id="tab-website">
     <h2 class="section-title">🌐 Website Offers</h2>
-    <p class="section-sub">Shopify website-এ চলা সব offer</p>
     <div class="table-wrap"><div class="table-scroll"><table>
-      <thead><tr><th>Offer Name</th><th>Season</th><th>Code</th><th>Products</th><th>SKU</th><th>Discount Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Delivery</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Offer Name</th><th>Season</th><th>Code</th><th>Products</th><th>SKU</th><th>Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Delivery</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
       <tbody id="web-tbody"></tbody>
     </table></div></div>
   </div>
 
-  <!-- INBOX -->
   <div class="tab-content" id="tab-inbox">
     <h2 class="section-title">💬 Inbox Offers</h2>
-    <p class="section-sub">Facebook Messenger / WhatsApp inbox offer</p>
     <div class="table-wrap"><div class="table-scroll"><table>
-      <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Discount Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Delivery</th><th>Script Note</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Delivery</th><th>Notes</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
       <tbody id="inbox-tbody"></tbody>
     </table></div></div>
   </div>
 
-  <!-- OFFICE -->
   <div class="tab-content" id="tab-office">
-    <h2 class="section-title">🏢 Office / Walk-in Offers</h2>
-    <p class="section-sub">Office-এ আসা customer-দের জন্য offer</p>
+    <h2 class="section-title">🏢 Office Offers</h2>
     <div class="table-wrap"><div class="table-scroll"><table>
-      <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Discount Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Condition</th><th>Discount</th><th>Delivery</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
+      <thead><tr><th>Offer Name</th><th>Season</th><th>Products</th><th>SKU</th><th>Type</th><th>Regular ৳</th><th>Offer ৳</th><th>Discount</th><th>Notes</th><th>Status</th><th>Start</th><th>End</th><th>Actions</th></tr></thead>
       <tbody id="office-tbody"></tbody>
     </table></div></div>
   </div>
 
-  <!-- SEASONAL -->
-  <div class="tab-content" id="tab-seasonal">
-    <h2 class="section-title">🗓 Seasonal Sale Calendar</h2>
-    <p class="section-sub">সারাবছরের season-wise sale</p>
-    <div class="season-grid" id="season-icons"></div>
-    <div class="table-wrap"><div class="table-scroll"><table>
-      <thead><tr><th>Season</th><th>Offer Name</th><th>Products</th><th>Discount Type</th><th>Discount</th><th>Code</th><th>Delivery</th><th>Status</th><th>Start → End</th><th>Actions</th></tr></thead>
-      <tbody id="season-tbody"></tbody>
-    </table></div></div>
-  </div>
-
-  <!-- LOYALTY -->
   <div class="tab-content" id="tab-loyalty">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-      <div>
-        <h2 class="section-title" style="margin-bottom:4px">⭐ Loyalty, Reviews & Engagement</h2>
-        <p class="section-sub" style="margin-bottom:0">Customer retention ও trust build করার offer</p>
-      </div>
-      <button class="btn btn-gold" onclick="openLoyaltyModal()">+ Add Loyalty Offer</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 class="section-title" style="margin-bottom:0">⭐ Loyalty & Reviews</h2>
+      <button class="btn btn-gold" onclick="openLoyaltyModal()">+ Add</button>
     </div>
     <div class="loyalty-grid" id="loyalty-grid"></div>
   </div>
 
-  <!-- PRODUCT PRICES -->
   <div class="tab-content" id="tab-prices">
-    <div class="stats-row" id="price-stats-row"></div>
-    <div class="filters">
-      <input class="filter-input" type="text" placeholder="🔍 Search product..." oninput="filterPrices()" id="price-search">
-      <select class="filter-select" onchange="filterPrices()" id="price-filter-cat">
-        <option value="">All Categories</option>
-      </select>
-      <select class="filter-select" onchange="filterPrices()" id="price-filter-platform">
-        <option value="">All Platforms</option>
-      </select>
-      <select class="filter-select" onchange="filterPrices()" id="price-filter-status">
-        <option value="">All Status</option>
-        <option value="sale">On Sale</option>
-        <option value="regular">Regular Price</option>
-        <option value="discontinued">Discontinued</option>
-      </select>
-      <button class="btn btn-gold" onclick="openPriceModal()">+ Add Product Price</button>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <h2 class="section-title" style="margin-bottom:0">🏷 Product Prices</h2>
+      <button class="btn btn-gold" onclick="openPriceModal()">+ Add Product</button>
     </div>
-    <div class="table-wrap">
-      <div class="table-scroll">
-        <table>
-          <colgroup>
-            <col style="width:220px">
-            <col style="width:140px">
-            <col style="width:130px">
-            <col style="width:110px">
-            <col style="width:110px">
-            <col style="width:100px">
-            <col style="width:100px">
-            <col style="width:150px">
-            <col style="width:110px">
-            <col style="width:110px">
-            <col style="width:110px">
-            <col style="width:150px">
-            <col style="width:120px">
-          </colgroup>
-          <thead><tr>
-            <th>Product Name</th><th>SKU</th><th>Category</th>
-            <th>Regular Price</th><th>Sale Price</th>
-            <th>Discount %</th><th>Discount ৳</th>
-            <th>Platform</th><th>Status</th>
-            <th>Start</th><th>End</th><th>Note</th><th>Actions</th>
-          </tr></thead>
-          <tbody id="prices-tbody"></tbody>
-        </table>
-      </div>
-    </div>
+    <div class="table-wrap"><div class="table-scroll"><table>
+      <thead><tr><th>Product Name</th><th>SKU</th><th>Category</th><th>Regular ৳</th><th>Sale ৳</th><th>Discount %</th><th>Discount ৳</th><th>Platform</th><th>Status</th><th>Start</th><th>End</th><th>Note</th><th>Actions</th></tr></thead>
+      <tbody id="prices-tbody"></tbody>
+    </table></div></div>
   </div>
-
-  <!-- SETTINGS -->
-  <div class="tab-content" id="tab-settings">
-    <h2 class="section-title">⚙️ Settings</h2>
-    <p class="section-sub">Categories, Discount Types, এবং Channels manage করো</p>
-    <div class="settings-grid">
-
-      <!-- CATEGORIES -->
-      <div class="settings-card">
-        <h3>🏷 Season / Categories</h3>
-        <p>Seasonal card add, edit বা delete করো — emoji + name দুটোই দাও</p>
-        <div class="settings-list" id="cat-list"></div>
-        <div class="settings-add" style="flex-direction:column;gap:8px">
-          <div style="display:flex;gap:8px">
-            <input type="text" id="cat-emoji" placeholder="Emoji 🎉" style="width:70px;text-align:center;font-size:18px">
-            <input type="text" id="cat-input" placeholder="Category name... e.g. Monsoon Sale" style="flex:1">
-          </div>
-          <div style="display:flex;gap:8px">
-            <input type="text" id="cat-month" placeholder="Month e.g. July–August" style="flex:1">
-            <button class="btn btn-gold btn-sm" onclick="addCategory()">+ Add Card</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- DISCOUNT TYPES -->
-      <div class="settings-card">
-        <h3>💸 Discount Types</h3>
-        <p>Discount type add, edit বা delete করো</p>
-        <div class="settings-list" id="dtype-list"></div>
-        <div class="settings-add">
-          <input type="text" id="dtype-input" placeholder="New discount type...">
-          <button class="btn btn-gold btn-sm" onclick="addSetting('discountTypes','dtype-input','dtype-list')">Add</button>
-        </div>
-      </div>
-
-      <!-- CHANNELS -->
-      <div class="settings-card">
-        <h3>📡 Channels</h3>
-        <p>Sales channel add, edit বা delete করো</p>
-        <div class="settings-list" id="channel-list"></div>
-        <div class="settings-add">
-          <input type="text" id="channel-input" placeholder="New channel name...">
-          <button class="btn btn-gold btn-sm" onclick="addSetting('channels','channel-input','channel-list')">Add</button>
-        </div>
-      </div>
-
-      <!-- DELIVERY RULES -->
-      <div class="settings-card">
-        <h3>🚚 Delivery Charge Rules</h3>
-        <p>Delivery charge rules define করো</p>
-        <div class="settings-list" id="delivery-list"></div>
-        <div class="settings-add">
-          <input type="text" id="delivery-input" placeholder="e.g. Buy 2 = Free Delivery">
-          <button class="btn btn-gold btn-sm" onclick="addSetting('deliveryRules','delivery-input','delivery-list')">Add</button>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
+</div>
 </div>
 
-<!-- MODAL -->
+<!-- OFFER MODAL -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
-    <div class="modal-header">
-      <h2 id="modal-title">New Offer</h2>
-      <button class="modal-close" onclick="closeModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group full"><label>Offer Name *</label><input type="text" id="f-name" placeholder="e.g. Noboborsho Flash Sale 2026"></div>
-        <div class="form-group"><label>Season / Category</label><select id="f-season"></select></div>
-        <div class="form-group"><label>Discount Code</label><input type="text" id="f-code" placeholder="e.g. NOBO10"></div>
-        <div class="form-group full"><label>Products</label><input type="text" id="f-products" placeholder="e.g. Smokey Top, Pleated Skirt, Kimono"></div>
-        <div class="form-group"><label>SKU</label><input type="text" id="f-sku" placeholder="e.g. ST-001, PS-002"></div>
-        <div class="form-group"><label>Regular Price (৳)</label><input type="number" id="f-regular" placeholder="e.g. 800"></div>
-        <div class="form-group"><label>Offer Price (৳)</label><input type="number" id="f-offer" placeholder="e.g. 720"></div>
-        <div class="form-group"><label>Discount Type *</label><select id="f-type"></select></div>
-        <div class="form-group"><label>Discount Amount</label><input type="text" id="f-discount" placeholder="e.g. 10% or ৳80 or Buy 2"></div>
-        <div class="form-group"><label>Channel *</label><select id="f-channel"></select></div>
-        <div class="form-group"><label>Status *</label>
-          <select id="f-status"><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="inactive">Inactive</option><option value="expired">Expired</option></select>
-        </div>
-
-        <!-- DELIVERY CHARGE SECTION -->
-        <div class="form-group full" style="background:var(--card2);border-radius:10px;padding:14px;border:1px solid var(--border)">
-          <label style="color:var(--gold);font-size:13px;margin-bottom:10px;display:block">🚚 Delivery Charge Settings</label>
-          <div class="form-grid" style="gap:12px">
-            <div class="form-group">
-              <label>Free Delivery?</label>
-              <select id="f-free-del">
-                <option value="no">No — Paid Delivery</option>
-                <option value="yes">Yes — Free Delivery</option>
-                <option value="conditional">Conditional (Min Order)</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Min Order for Free Delivery (৳)</label>
-              <input type="number" id="f-min-order" placeholder="e.g. 1499">
-            </div>
-            <div class="form-group full">
-              <label>Delivery Condition Note</label>
-              <input type="text" id="f-del-note" placeholder="e.g. Buy 2 any product = Free Delivery | ৳1499+ = Free">
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group"><label>Offer Start</label><input type="date" id="f-start"></div>
-        <div class="form-group"><label>Offer End</label><input type="date" id="f-end"></div>
-        <div class="form-group full"><label>Notes / Script Hint</label><textarea id="f-notes" placeholder="e.g. Show when customer buys 2 items. Apply code automatically."></textarea></div>
+    <div class="modal-header"><h2 id="modal-title">New Offer</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="form-group full"><label>Offer Name *</label><input type="text" id="f-name" placeholder="e.g. Noboborsho Flash Sale"></div>
+      <div class="form-group"><label>Season</label><input type="text" id="f-season" placeholder="e.g. Bundle Offer"></div>
+      <div class="form-group"><label>Discount Code</label><input type="text" id="f-code" placeholder="e.g. NOBO10"></div>
+      <div class="form-group full"><label>Products</label><input type="text" id="f-products" placeholder="e.g. Smokey Top, Pleated Skirt"></div>
+      <div class="form-group"><label>SKU</label><input type="text" id="f-sku" placeholder="e.g. ST-001"></div>
+      <div class="form-group"><label>Regular Price (৳)</label><input type="number" id="f-regular" placeholder="e.g. 800"></div>
+      <div class="form-group"><label>Offer Price (৳)</label><input type="number" id="f-offer" placeholder="e.g. 720"></div>
+      <div class="form-group"><label>Discount Type</label>
+        <select id="f-type"><option value="">— Select —</option><option>Percent OFF</option><option>Fixed Price</option><option>Bundle</option><option>Combo</option><option>Volume / Tiered</option><option>Free Delivery</option><option>BOGO</option><option>Loyalty</option></select>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveOffer()">Save Offer</button>
-    </div>
+      <div class="form-group"><label>Discount</label><input type="text" id="f-discount" placeholder="e.g. 10% or ৳80"></div>
+      <div class="form-group"><label>Channel</label>
+        <select id="f-channel"><option value="">— Select —</option><option>Website</option><option>Inbox</option><option>Office</option><option>Website + Inbox</option><option>All Channels</option></select>
+      </div>
+      <div class="form-group"><label>Status</label>
+        <select id="f-status"><option value="active">Active</option><option value="scheduled">Scheduled</option><option value="inactive">Inactive</option><option value="expired">Expired</option></select>
+      </div>
+      <div class="form-group full" style="background:var(--card2);border-radius:10px;padding:14px;border:1px solid var(--border)">
+        <label style="color:var(--gold);font-size:13px;margin-bottom:10px;display:block">🚚 Delivery Settings</label>
+        <div class="form-grid" style="gap:12px">
+          <div class="form-group"><label>Free Delivery?</label>
+            <select id="f-free-del"><option value="no">No — Paid</option><option value="yes">Yes — Free</option><option value="conditional">Conditional</option></select>
+          </div>
+          <div class="form-group"><label>Min Order (৳)</label><input type="number" id="f-min-order" placeholder="e.g. 1499"></div>
+          <div class="form-group full"><label>Delivery Note</label><input type="text" id="f-del-note" placeholder="e.g. Buy 2 = Free Delivery"></div>
+        </div>
+      </div>
+      <div class="form-group"><label>Start Date</label><input type="date" id="f-start"></div>
+      <div class="form-group"><label>End Date</label><input type="date" id="f-end"></div>
+      <div class="form-group full"><label>Notes</label><textarea id="f-notes" placeholder="Script hint..."></textarea></div>
+    </div></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeModal()">Cancel</button><button class="btn btn-gold" onclick="saveOffer()">Save Offer</button></div>
   </div>
 </div>
 
-<!-- PRODUCT PRICE MODAL -->
+<!-- PRICE MODAL -->
 <div class="modal-overlay" id="price-modal">
   <div class="modal">
-    <div class="modal-header">
-      <h2 id="price-modal-title">Add Product Price</h2>
-      <button class="modal-close" onclick="closePriceModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group full"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Formal Pant, Kimono, Smokey Top"></div>
-        <div class="form-group"><label>SKU</label><input type="text" id="p-sku" placeholder="e.g. FP-001"></div>
-        <div class="form-group"><label>Product Category</label><select id="p-cat"></select></div>
-        <div class="form-group"><label>Regular Price (৳) *</label><input type="number" id="p-regular" placeholder="e.g. 1200" oninput="calcDiscount()"></div>
-        <div class="form-group"><label>Sale Price (৳)</label><input type="number" id="p-sale" placeholder="e.g. 950" oninput="calcDiscount()"></div>
-        <div class="form-group">
-          <label>Discount % <span style="color:var(--gold)">(Auto)</span></label>
-          <input type="text" id="p-disc-pct" readonly style="color:var(--gold);font-weight:600" placeholder="Auto calculated">
-        </div>
-        <div class="form-group">
-          <label>Discount ৳ <span style="color:var(--gold)">(Auto)</span></label>
-          <input type="text" id="p-disc-amt" readonly style="color:var(--gold);font-weight:600" placeholder="Auto calculated">
-        </div>
-        <div class="form-group"><label>Platform</label>
-          <select id="p-platform">
-            <option value="All Platforms">All Platforms</option>
-            <option value="Website">Website Only</option>
-            <option value="Inbox">Inbox Only</option>
-            <option value="Office">Office Only</option>
-            <option value="Website + Inbox">Website + Inbox</option>
-            <option value="Website + Office">Website + Office</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Status</label>
-          <select id="p-status">
-            <option value="sale">On Sale</option>
-            <option value="regular">Regular Price</option>
-            <option value="discontinued">Discontinued</option>
-          </select>
-        </div>
-        <div class="form-group"><label>Start Date</label><input type="date" id="p-start"></div>
-        <div class="form-group"><label>End Date <span style="color:var(--text-muted)">(Optional)</span></label><input type="date" id="p-end"></div>
-        <div class="form-group full"><label>Note</label><input type="text" id="p-note" placeholder="e.g. Permanent price / Limited time / Stock clearance"></div>
+    <div class="modal-header"><h2 id="price-modal-title">Add Product Price</h2><button class="modal-close" onclick="closePriceModal()">✕</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="form-group full"><label>Product Name *</label><input type="text" id="p-name" placeholder="e.g. Formal Pant"></div>
+      <div class="form-group"><label>SKU</label><input type="text" id="p-sku" placeholder="e.g. FP-001"></div>
+      <div class="form-group"><label>Category</label><input type="text" id="p-cat" placeholder="e.g. Pants"></div>
+      <div class="form-group"><label>Regular Price (৳)</label><input type="number" id="p-regular" placeholder="e.g. 1200" oninput="calcDiscount()"></div>
+      <div class="form-group"><label>Sale Price (৳)</label><input type="number" id="p-sale" placeholder="e.g. 950" oninput="calcDiscount()"></div>
+      <div class="form-group"><label>Discount % (Auto)</label><input type="text" id="p-disc-pct" readonly style="color:var(--gold);font-weight:600"></div>
+      <div class="form-group"><label>Discount ৳ (Auto)</label><input type="text" id="p-disc-amt" readonly style="color:var(--gold);font-weight:600"></div>
+      <div class="form-group"><label>Platform</label>
+        <select id="p-platform"><option>All Platforms</option><option>Website</option><option>Inbox</option><option>Office</option><option>Website + Inbox</option></select>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closePriceModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="savePrice()">Save Product Price</button>
-    </div>
+      <div class="form-group"><label>Status</label>
+        <select id="p-status"><option value="sale">On Sale</option><option value="regular">Regular</option><option value="discontinued">Discontinued</option></select>
+      </div>
+      <div class="form-group"><label>Start</label><input type="date" id="p-start"></div>
+      <div class="form-group"><label>End</label><input type="date" id="p-end"></div>
+      <div class="form-group full"><label>Note</label><input type="text" id="p-note" placeholder="e.g. Permanent sale price"></div>
+    </div></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closePriceModal()">Cancel</button><button class="btn btn-gold" onclick="savePrice()">Save</button></div>
   </div>
 </div>
 
 <!-- LOYALTY MODAL -->
 <div class="modal-overlay" id="loyalty-modal">
-  <div class="modal" style="max-width:580px">
-    <div class="modal-header">
-      <h2 id="loyalty-modal-title">Add Loyalty Offer</h2>
-      <button class="modal-close" onclick="closeLoyaltyModal()">✕</button>
-    </div>
-    <div class="modal-body">
-      <div class="form-grid">
-        <div class="form-group" style="grid-column:1/-1;flex-direction:row;gap:10px;align-items:flex-end">
-          <div class="form-group" style="width:70px">
-            <label>Icon</label>
-            <input type="text" id="l-icon" placeholder="📱" style="text-align:center;font-size:20px">
-          </div>
-          <div class="form-group" style="flex:1">
-            <label>Offer Name *</label>
-            <input type="text" id="l-name" placeholder="e.g. WhatsApp Opt-in">
-          </div>
-        </div>
-        <div class="form-group full">
-          <label>Description</label>
-          <input type="text" id="l-desc" placeholder="e.g. Customer WhatsApp list-এ join করলে reward পাবে">
-        </div>
-        <div class="form-group">
-          <label>Reward</label>
-          <input type="text" id="l-reward" placeholder="e.g. ৳50 OFF next order">
-        </div>
-        <div class="form-group">
-          <label>Discount Code</label>
-          <input type="text" id="l-code" placeholder="e.g. WAJOIN50">
-        </div>
-        <div class="form-group">
-          <label>Trigger</label>
-          <input type="text" id="l-trigger" placeholder="e.g. Reply YES to message">
-        </div>
-        <div class="form-group">
-          <label>Status</label>
-          <select id="l-status">
-            <option value="active">● Active</option>
-            <option value="planned">● Planned</option>
-            <option value="inactive">● Inactive</option>
-          </select>
-        </div>
-        <div class="form-group full">
-          <label>Notes</label>
-          <textarea id="l-notes" placeholder="Extra notes or instructions..."></textarea>
-        </div>
+  <div class="modal" style="max-width:560px">
+    <div class="modal-header"><h2 id="loyalty-modal-title">Add Loyalty Offer</h2><button class="modal-close" onclick="closeLoyaltyModal()">✕</button></div>
+    <div class="modal-body"><div class="form-grid">
+      <div class="form-group" style="grid-column:1/-1;flex-direction:row;gap:10px;align-items:flex-end">
+        <div class="form-group" style="width:70px"><label>Icon</label><input type="text" id="l-icon" placeholder="📱" style="text-align:center;font-size:20px"></div>
+        <div class="form-group" style="flex:1"><label>Name *</label><input type="text" id="l-name" placeholder="e.g. WhatsApp Opt-in"></div>
       </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeLoyaltyModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveLoyalty()">Save</button>
-    </div>
-  </div>
-</div>
-
-<!-- EDIT SETTING MODAL -->
-<div class="modal-overlay" id="edit-modal">
-  <div class="modal" style="max-width:400px">
-    <div class="modal-header"><h2 style="font-size:16px;color:var(--gold)" id="edit-modal-title">Edit</h2><button class="modal-close" onclick="closeEditModal()">✕</button></div>
-    <div class="modal-body"><div class="form-group"><label>Name</label><input type="text" id="edit-val"></div></div>
-    <div class="modal-footer"><button class="btn btn-outline" onclick="closeEditModal()">Cancel</button><button class="btn btn-gold" onclick="saveEdit()">Save</button></div>
+      <div class="form-group full"><label>Description</label><input type="text" id="l-desc" placeholder="e.g. Join করলে reward পাবে"></div>
+      <div class="form-group"><label>Reward</label><input type="text" id="l-reward" placeholder="e.g. ৳50 OFF"></div>
+      <div class="form-group"><label>Code</label><input type="text" id="l-code" placeholder="e.g. WAJOIN50"></div>
+      <div class="form-group"><label>Trigger</label><input type="text" id="l-trigger" placeholder="e.g. Reply YES"></div>
+      <div class="form-group"><label>Status</label>
+        <select id="l-status"><option value="active">Active</option><option value="planned">Planned</option><option value="inactive">Inactive</option></select>
+      </div>
+      <div class="form-group full"><label>Notes</label><textarea id="l-notes" placeholder="Extra notes..."></textarea></div>
+    </div></div>
+    <div class="modal-footer"><button class="btn btn-outline" onclick="closeLoyaltyModal()">Cancel</button><button class="btn btn-gold" onclick="saveLoyalty()">Save</button></div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// DEFAULT SETTINGS
-const defaultSettings = {
-  categories: [
-    {icon:'🎉',name:'New Year Sale',month:'January'},
-    {icon:'💝',name:'Valentine Sale',month:'February'},
-    {icon:'🌸',name:'Spring Collection',month:'March'},
-    {icon:'🎊',name:'Noboborsho Sale',month:'April'},
-    {icon:'🌙',name:'Ramadan Sale',month:'Mar–Apr'},
-    {icon:'🕌',name:'Eid Sale',month:'Apr/Jun'},
-    {icon:'💰',name:'Eid Salami Sale',month:'Post Eid'},
-    {icon:'☀️',name:'Summer Sale',month:'June'},
-    {icon:'🔥',name:'Mid-Year Flash',month:'July'},
-    {icon:'📚',name:'Back to College',month:'September'},
-    {icon:'🍂',name:'Autumn Sale',month:'October'},
-    {icon:'🪔',name:'Puja Sale',month:'October'},
-    {icon:'🎂',name:'Birthday Sale',month:'Any'},
-    {icon:'💥',name:'Black Friday',month:'November'},
-    {icon:'🛍️',name:'Year-End Mega Sale',month:'November'},
-    {icon:'🎄',name:'Christmas Sale',month:'December'},
-    {icon:'⚡',name:'Flash Sale',month:'Any'},
-    {icon:'🎁',name:'Bundle Offer',month:'Any'},
-    {icon:'🤝',name:'Influencer Collab',month:'Any'},
-    {icon:'🆕',name:'New Arrival Drop',month:'Any'},
-    {icon:'📦',name:'Regular Offer',month:'Any'}
-  ],
-  discountTypes: ["Percent OFF","Fixed Price","Bundle","Combo","Volume / Tiered","Free Delivery","BOGO","Loyalty","Influencer","Cashback"],
-  channels: ["Website","Inbox","Office","Website + Inbox","Website + Office","All Channels"],
-  deliveryRules: ["Buy 2 any product = Free Delivery","৳1499+ = Free Delivery","৳2000+ = Free Delivery","Bundle purchase = Free Delivery","All orders Free Delivery (promo period)"]
-};
+// ========== CONFIG ==========
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjE--Kq8ELTH7eB8nIl6-igx_zprjG9ZZHp1LwpSbUyoSzKwFKKfcCGXCrsBmeXtokdw/exec';
+const PASS = 'TB@2026';
 
-let settings = JSON.parse(localStorage.getItem('tb_settings') || 'null') || defaultSettings;
-let offers = JSON.parse(localStorage.getItem('tb_offers') || '[]');
-let editIndex = -1;
-let editSettingKey = null;
-let editSettingIdx = null;
+let offers = [], prices = [], loyalties = [];
+let editOfferIdx = -1, editPriceIdx = -1, editLoyaltyIdx = -1;
 
-if (offers.length === 0) {
-  offers = [
-    { name:"Noboborsho Flash Sale", season:"Noboborsho Sale", code:"NOBO10", products:"All Products", sku:"ALL", regular:"800", offer:"720", type:"Percent OFF", discount:"10%", channel:"Website", status:"expired", start:"2026-04-01", end:"2026-04-14", freeDelivery:"yes", minOrder:"", delNote:"Free delivery on all orders", notes:"Flat 10% OFF sitewide" },
-    { name:"Buy 2 Get 10% OFF + Free Delivery", season:"Bundle Offer", code:"BUZZ10", products:"Smokey Top, Pleated Skirt, Kimono, Shrug", sku:"ST-001,PS-002", regular:"800", offer:"720", type:"Bundle", discount:"Buy 2 → 10% OFF", channel:"Website + Inbox", status:"active", start:"2026-05-10", end:"2026-05-25", freeDelivery:"yes", minOrder:"", delNote:"Buy any 2 = Free Delivery automatically", notes:"Buy any 2 products get 10% OFF + Free Delivery" },
-    { name:"Office Walk-in Discount", season:"Regular Offer", code:"", products:"All Products", sku:"ALL", regular:"", offer:"", type:"Volume / Tiered", discount:"2pc:5% | 3pc:10% | ৳3000+:12%", channel:"Office", status:"active", start:"2026-05-01", end:"2026-12-31", freeDelivery:"no", minOrder:"", delNote:"No delivery — walk-in only", notes:"Show discount structure to walk-in customers" },
-    { name:"Inbox Bundle Deal", season:"Bundle Offer", code:"", products:"All Products", sku:"ALL", regular:"", offer:"", type:"Bundle", discount:"Buy 2 → 10% OFF", channel:"Inbox", status:"active", start:"2026-05-10", end:"2026-05-25", freeDelivery:"conditional", minOrder:"1499", delNote:"৳1499+ order = Free Delivery", notes:"Mention free delivery when customer orders ৳1499+" },
-    { name:"Summer Sale 2026", season:"Summer Sale", code:"SUMMER10", products:"Mesh Top, Crop Top, Kimono, Shrug", sku:"MT-003", regular:"800", offer:"720", type:"Percent OFF", discount:"10%", channel:"Website", status:"scheduled", start:"2026-06-01", end:"2026-06-20", freeDelivery:"conditional", minOrder:"1499", delNote:"৳1499+ = Free Delivery", notes:"Summer collection focus" },
-  ];
-  saveOffers();
+// ========== API CALL ==========
+function apiCall(action, data, onSuccess, onError) {
+  const url = SCRIPT_URL + '?action=' + action;
+  const options = {
+    method: data ? 'POST' : 'GET',
+    headers: { 'Content-Type': 'application/json' },
+    body: data ? JSON.stringify(data) : undefined
+  };
+  // For GET requests (load data)
+  if (!data) {
+    fetch(SCRIPT_URL + '?v=' + Date.now())
+      .then(r => r.json())
+      .then(onSuccess)
+      .catch(onError);
+  } else {
+    fetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ action, data })
+    })
+    .then(r => r.json())
+    .then(onSuccess)
+    .catch(onError);
+  }
 }
 
-function saveOffers() { localStorage.setItem('tb_offers', JSON.stringify(offers)); }
-function saveSettings() { localStorage.setItem('tb_settings', JSON.stringify(settings)); }
+// ========== AUTH ==========
+function checkPass() {
+  const p = document.getElementById('pass-input').value;
+  if (p === PASS) {
+    sessionStorage.setItem('tb_auth','yes');
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('pass-error').style.display = 'block';
+  }
+}
+document.addEventListener('keypress', e => { if(e.key==='Enter') checkPass(); });
 
+// ========== LOAD DATA ==========
+function loadData() {
+  showToast('⏳ Loading...');
+  fetch(SCRIPT_URL + '?v=' + Date.now())
+    .then(r => r.json())
+    .then(d => {
+      offers = d.offers || [];
+      prices = d.prices || [];
+      loyalties = d.loyalties || [];
+      renderAll();
+      showToast('✅ Data loaded!');
+    })
+    .catch(e => showToast('❌ Load error: ' + e.message));
+}
+
+// ========== SAVE ==========
+function saveToSheet(action, payload) {
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    headers: {'Content-Type':'text/plain'},
+    body: JSON.stringify({ action, data: payload })
+  })
+  .then(r => r.json())
+  .then(d => showToast(d.status === 'ok' ? '✅ Saved!' : '❌ Error!'))
+  .catch(e => showToast('❌ ' + e.message));
+}
+
+// ========== INIT ==========
+window.onload = function() {
+  document.getElementById('loading-screen').style.display = 'none';
+  if (sessionStorage.getItem('tb_auth') === 'yes') {
+    document.getElementById('lock-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    loadData();
+  } else {
+    document.getElementById('lock-screen').style.display = 'flex';
+  }
+};
+
+// ========== TOAST ==========
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -613,709 +408,211 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-// POPULATE DROPDOWNS
-function populateDropdowns() {
-  const fType = document.getElementById('f-type');
-  const fSeason = document.getElementById('f-season');
-  const fChannel = document.getElementById('f-channel');
-  const ftFilter = document.getElementById('filter-type');
-  const fcFilter = document.getElementById('filter-channel');
-
-  fType.innerHTML = '<option value="">— Select Type —</option>' + settings.discountTypes.map(d => `<option>${d}</option>`).join('');
-  fSeason.innerHTML = '<option value="">— Select Season —</option>' + settings.categories.map(c => `<option value="${c.name||c}">${c.icon||''} ${c.name||c}</option>`).join('');
-  fChannel.innerHTML = '<option value="">— Select Channel —</option>' + settings.channels.map(c => `<option>${c}</option>`).join('');
-  ftFilter.innerHTML = '<option value="">All Types</option>' + settings.discountTypes.map(d => `<option>${d}</option>`).join('');
-  fcFilter.innerHTML = '<option value="">All Channels</option>' + settings.channels.map(c => `<option>${c}</option>`).join('');
-}
-
-// SETTINGS RENDER
-function renderSettingsList(key, listId) {
-  const list = document.getElementById(listId);
-  if (!list) return;
-  if (key === 'categories') {
-    list.innerHTML = settings.categories.map((c, i) => `
-      <div class="settings-item">
-        <span style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:18px">${c.icon||'📦'}</span>
-          <span>
-            <div style="font-size:13px;font-weight:500">${c.name}</div>
-            <div style="font-size:11px;color:var(--text-muted)">${c.month||'Any'}</div>
-          </span>
-        </span>
-        <div class="settings-item-actions">
-          <button class="btn-icon" onclick="openEditCategory(${i})">✏️</button>
-          <button class="btn-icon" style="color:var(--red)" onclick="deleteCategory(${i})">🗑</button>
-        </div>
-      </div>
-    `).join('');
-    return;
-  }
-  list.innerHTML = settings[key].map((item, i) => `
-    <div class="settings-item">
-      <span>${item}</span>
-      <div class="settings-item-actions">
-        <button class="btn-icon" onclick="openEditSetting('${key}',${i},'${listId}')">✏️</button>
-        <button class="btn-icon" style="color:var(--red)" onclick="deleteSetting('${key}',${i},'${listId}')">🗑</button>
-      </div>
-    </div>
-  `).join('');
-}
-
-function renderAllSettings() {
-  renderSettingsList('categories','cat-list');
-  renderSettingsList('discountTypes','dtype-list');
-  renderSettingsList('channels','channel-list');
-  renderSettingsList('deliveryRules','delivery-list');
-}
-
-function addCategory() {
-  const icon = document.getElementById('cat-emoji').value.trim() || '🏷';
-  const name = document.getElementById('cat-input').value.trim();
-  const month = document.getElementById('cat-month').value.trim() || 'Any';
-  if (!name) { showToast('❌ Category name required!'); return; }
-  if (settings.categories.find(c => c.name === name)) { showToast('Already exists!'); return; }
-  settings.categories.push({icon, name, month});
-  saveSettings();
-  document.getElementById('cat-emoji').value = '';
-  document.getElementById('cat-input').value = '';
-  document.getElementById('cat-month').value = '';
-  renderSettingsList('categories','cat-list');
-  populateDropdowns();
+// ========== TABS ==========
+function switchTab(tab) {
+  const tabs = ['all','prices','website','inbox','office','loyalty'];
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
   renderAll();
-  showToast('✅ Category added!');
 }
 
-function deleteCategory(idx) {
-  if (!confirm(`Delete "${settings.categories[idx].name}"?`)) return;
-  settings.categories.splice(idx, 1);
-  saveSettings();
-  renderSettingsList('categories','cat-list');
-  populateDropdowns();
-  renderAll();
-  showToast('🗑 Deleted!');
+// ========== RENDER ==========
+function renderAll() {
+  renderStats();
+  filterOffers();
+  renderTable('web-tbody', offers.filter(o=>(o['Channel']||'').includes('Website')), 'web');
+  renderTable('inbox-tbody', offers.filter(o=>(o['Channel']||'').includes('Inbox')), 'inbox');
+  renderTable('office-tbody', offers.filter(o=>(o['Channel']||'').includes('Office')), 'office');
+  renderPrices(prices);
+  renderLoyalty();
 }
 
-function openEditCategory(idx) {
-  editSettingKey = 'categories';
-  editSettingIdx = idx;
-  const c = settings.categories[idx];
-  document.getElementById('edit-modal-title').textContent = 'Edit Category';
-  document.getElementById('edit-val').value = c.name;
-  // Add extra fields dynamically
-  document.getElementById('edit-modal').innerHTML = `
-  <div class="modal" style="max-width:420px">
-    <div class="modal-header"><h2 style="font-size:16px;color:var(--gold)">Edit Season Card</h2><button class="modal-close" onclick="closeEditModal()">✕</button></div>
-    <div class="modal-body">
-      <div class="form-grid" style="gap:12px">
-        <div class="form-group" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:10px">
-          <div class="form-group" style="width:80px">
-            <label>Emoji</label>
-            <input type="text" id="edit-icon" value="${c.icon||'🏷'}" style="text-align:center;font-size:20px">
-          </div>
-          <div class="form-group" style="flex:1">
-            <label>Category Name *</label>
-            <input type="text" id="edit-cat-name" value="${c.name}">
-          </div>
-        </div>
-        <div class="form-group full">
-          <label>Month / Season Period</label>
-          <input type="text" id="edit-cat-month" value="${c.month||'Any'}" placeholder="e.g. June–July">
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-outline" onclick="closeEditModal()">Cancel</button>
-      <button class="btn btn-gold" onclick="saveCategoryEdit(${idx})">Save</button>
-    </div>
-  </div>`;
-  document.getElementById('edit-modal').classList.add('open');
-}
-
-function saveCategoryEdit(idx) {
-  const icon = document.getElementById('edit-icon').value.trim() || '🏷';
-  const name = document.getElementById('edit-cat-name').value.trim();
-  const month = document.getElementById('edit-cat-month').value.trim() || 'Any';
-  if (!name) { showToast('❌ Name required!'); return; }
-  settings.categories[idx] = {icon, name, month};
-  saveSettings();
-  closeEditModal();
-  renderAllSettings();
-  populateDropdowns();
-  renderAll();
-  showToast('✅ Updated!');
-}
-
-function addSetting(key, inputId, listId) {
-  const input = document.getElementById(inputId);
-  const val = input.value.trim();
-  if (!val) return;
-  if (settings[key].includes(val)) { showToast('Already exists!'); return; }
-  settings[key].push(val);
-  saveSettings();
-  input.value = '';
-  renderSettingsList(key, listId);
-  populateDropdowns();
-  showToast('✅ Added!');
-}
-
-function deleteSetting(key, idx, listId) {
-  if (!confirm(`Delete "${settings[key][idx]}"?`)) return;
-  settings[key].splice(idx, 1);
-  saveSettings();
-  renderSettingsList(key, listId);
-  populateDropdowns();
-  showToast('🗑 Deleted!');
-}
-
-function openEditSetting(key, idx, listId) {
-  editSettingKey = key;
-  editSettingIdx = idx;
-  document.getElementById('edit-modal-title').textContent = 'Edit ' + key;
-  document.getElementById('edit-val').value = settings[key][idx];
-  document.getElementById('edit-modal').classList.add('open');
-}
-
-function closeEditModal() { document.getElementById('edit-modal').classList.remove('open'); }
-
-function saveEdit() {
-  const val = document.getElementById('edit-val').value.trim();
-  if (!val) return;
-  settings[editSettingKey][editSettingIdx] = val;
-  saveSettings();
-  closeEditModal();
-  renderAllSettings();
-  populateDropdowns();
-  showToast('✅ Updated!');
-}
-
-// BADGES
-function statusBadge(s) {
-  const map = { active:'badge-active', inactive:'badge-inactive', scheduled:'badge-scheduled', expired:'badge-expired' };
-  return `<span class="badge ${map[s]||'badge-inactive'}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;
-}
-
-function deliveryBadge(o) {
-  if (o.freeDelivery === 'yes') return `<span class="badge-del-yes">FREE 🚚</span>`;
-  if (o.freeDelivery === 'conditional') return `<span class="badge-del-yes">Cond. FREE 🚚</span>`;
-  return `<span class="badge-del-no">Paid</span>`;
-}
-
-function minOrderCell(o) {
-  if (o.freeDelivery === 'conditional' && o.minOrder) return `৳${o.minOrder}+`;
-  return '—';
-}
-
-// STATS
 function renderStats() {
-  const active = offers.filter(o=>o.status==='active').length;
-  const scheduled = offers.filter(o=>o.status==='scheduled').length;
-  const freeDelivery = offers.filter(o=>o.freeDelivery==='yes'||o.freeDelivery==='conditional').length;
+  const active = offers.filter(o=>o['Status']==='active').length;
+  const scheduled = offers.filter(o=>o['Status']==='scheduled').length;
+  const freeDel = offers.filter(o=>o['Free Delivery']==='yes'||o['Free Delivery']==='conditional').length;
   document.getElementById('stats-row').innerHTML = `
     <div class="stat-card"><div class="stat-label">Total Offers</div><div class="stat-value">${offers.length}</div></div>
     <div class="stat-card"><div class="stat-label">Active</div><div class="stat-value" style="color:var(--green)">${active}</div></div>
     <div class="stat-card"><div class="stat-label">Scheduled</div><div class="stat-value" style="color:var(--blue)">${scheduled}</div></div>
-    <div class="stat-card"><div class="stat-label">Free Delivery</div><div class="stat-value" style="color:var(--green)">${freeDelivery}</div></div>
-    <div class="stat-card"><div class="stat-label">Website</div><div class="stat-value">${offers.filter(o=>o.channel.includes('Website')).length}</div></div>
-    <div class="stat-card"><div class="stat-label">Inbox</div><div class="stat-value">${offers.filter(o=>o.channel.includes('Inbox')).length}</div></div>
-  `;
+    <div class="stat-card"><div class="stat-label">Free Delivery</div><div class="stat-value" style="color:var(--green)">${freeDel}</div></div>
+    <div class="stat-card"><div class="stat-label">Website</div><div class="stat-value">${offers.filter(o=>(o['Channel']||'').includes('Website')).length}</div></div>
+    <div class="stat-card"><div class="stat-label">Inbox</div><div class="stat-value">${offers.filter(o=>(o['Channel']||'').includes('Inbox')).length}</div></div>`;
 }
 
-// RENDER TABLE
-function renderOffers(tbodyId, data) {
-  const tbody = document.getElementById(tbodyId);
-  if (!tbody) return;
-  if (!data.length) { tbody.innerHTML=`<tr><td colspan="20"><div class="empty"><div class="empty-icon">📭</div>No offers found</div></td></tr>`; return; }
+function statusBadge(s) {
+  const m={active:'badge-active',inactive:'badge-inactive',scheduled:'badge-scheduled',expired:'badge-expired'};
+  return `<span class="badge ${m[s]||'badge-inactive'}">${(s||'').charAt(0).toUpperCase()+(s||'').slice(1)}</span>`;
+}
+function delBadge(o) {
+  if(o['Free Delivery']==='yes') return `<span class="badge-del-yes">FREE 🚚</span>`;
+  if(o['Free Delivery']==='conditional') return `<span class="badge-del-yes">Cond.FREE 🚚</span>`;
+  return `<span class="badge-del-no">Paid</span>`;
+}
 
-  const tabId = tbodyId;
-  tbody.innerHTML = data.map((o,di) => {
-    const i = offers.indexOf(o);
-    const isFreeDel = o.freeDelivery==='yes'||o.freeDelivery==='conditional';
-    const rowClass = isFreeDel ? 'del-free-row' : '';
+function filterOffers() {
+  const search=(document.getElementById('search-input').value||'').toLowerCase();
+  const status=document.getElementById('filter-status').value;
+  const channel=document.getElementById('filter-channel').value;
+  const delivery=document.getElementById('filter-delivery').value;
+  const filtered=offers.filter(o=>
+    (!search||(o['Offer Name']||'').toLowerCase().includes(search)||(o['Products']||'').toLowerCase().includes(search)||(o['Code']||'').toLowerCase().includes(search))
+    &&(!status||o['Status']===status)
+    &&(!channel||(o['Channel']||'').includes(channel))
+    &&(!delivery||(delivery==='yes'?(o['Free Delivery']==='yes'||o['Free Delivery']==='conditional'):(o['Free Delivery']==='no')))
+  );
+  renderTable('offers-tbody',filtered,'all');
+}
 
-    if (tabId === 'offers-tbody') return `<tr class="${rowClass}">
-      <td><strong style="font-size:14px">${o.name}</strong>${o.code?`<br><small style="color:var(--gold);font-size:11px">🏷 ${o.code}</small>`:''}</td>
-      <td style="font-size:12px">${o.season||'—'}</td>
-      <td style="font-size:12px;white-space:normal">${o.products}</td>
-      <td style="font-size:13px;color:var(--text-muted);font-weight:500">${o.sku||'—'}</td>
-      <td>${o.regular?'৳'+o.regular:'—'}</td>
-      <td style="color:var(--gold)">${o.offer?'৳'+o.offer:'—'}</td>
-      <td><span class="badge-type">${o.type}</span></td>
-      <td style="color:var(--gold);font-weight:600">${o.discount}</td>
-      <td>${deliveryBadge(o)}${o.delNote?`<br><small style="font-size:10px;color:var(--text-muted)">${o.delNote}</small>`:''}</td>
-      <td style="font-size:12px">${minOrderCell(o)}</td>
-      <td><span class="badge-channel">${o.channel}</span></td>
-      <td>${statusBadge(o.status)}</td>
-      <td style="font-size:13px;font-weight:500">${o.start||'—'}</td>
-      <td style="font-size:13px;font-weight:500">${o.end||'—'}</td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div></td>
-    </tr>`;
-
-    if (tabId === 'web-tbody') return `<tr class="${rowClass}">
-      <td><strong>${o.name}</strong></td>
-      <td style="font-size:12px">${o.season||'—'}</td>
-      <td style="color:var(--gold)">${o.code||'—'}</td>
-      <td style="font-size:12px">${o.products}</td>
-      <td style="font-size:13px;font-weight:500;color:var(--text-muted)">${o.sku||'—'}</td>
-      <td><span class="badge-type">${o.type||'—'}</span></td>
-      <td>${o.regular?'৳'+o.regular:'—'}</td>
-      <td style="color:var(--gold)">${o.offer?'৳'+o.offer:'—'}</td>
-      <td style="font-weight:600;color:var(--gold)">${o.discount}</td>
-      <td>${deliveryBadge(o)}</td><td>${statusBadge(o.status)}</td>
-      <td style="font-size:13px;font-weight:500">${o.start||'—'}</td><td style="font-size:13px;font-weight:500">${o.end||'—'}</td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div></td>
-    </tr>`;
-
-    if (tabId === 'inbox-tbody') return `<tr class="${rowClass}">
-      <td><strong>${o.name}</strong></td>
-      <td style="font-size:12px">${o.season||'—'}</td>
-      <td style="font-size:12px">${o.products}</td>
-      <td style="font-size:13px;font-weight:500;color:var(--text-muted)">${o.sku||'—'}</td>
-      <td><span class="badge-type">${o.type||'—'}</span></td>
-      <td>${o.regular?'৳'+o.regular:'—'}</td><td style="color:var(--gold)">${o.offer?'৳'+o.offer:'—'}</td>
-      <td style="font-weight:600;color:var(--gold)">${o.discount}</td>
-      <td>${deliveryBadge(o)}${o.delNote?`<br><small style="font-size:10px;color:var(--text-muted)">${o.delNote}</small>`:''}</td>
-      <td style="font-size:12px;color:var(--text-muted);white-space:normal">${o.notes||'—'}</td>
-      <td>${statusBadge(o.status)}</td><td style="font-size:13px;font-weight:500">${o.start||'—'}</td><td style="font-size:13px;font-weight:500">${o.end||'—'}</td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div></td>
-    </tr>`;
-
-    if (tabId === 'office-tbody') return `<tr class="${rowClass}">
-      <td><strong>${o.name}</strong></td>
-      <td style="font-size:12px">${o.season||'—'}</td>
-      <td style="font-size:12px">${o.products}</td>
-      <td style="font-size:13px;font-weight:500;color:var(--text-muted)">${o.sku||'—'}</td>
-      <td><span class="badge-type">${o.type||'—'}</span></td>
-      <td>${o.regular?'৳'+o.regular:'—'}</td><td style="color:var(--gold)">${o.offer?'৳'+o.offer:'—'}</td>
-      <td style="font-size:12px;color:var(--text-muted)">${o.notes||'—'}</td>
-      <td style="font-weight:600;color:var(--gold)">${o.discount}</td>
-      <td>${deliveryBadge(o)}</td><td>${statusBadge(o.status)}</td>
-      <td style="font-size:13px;font-weight:500">${o.start||'—'}</td><td style="font-size:13px;font-weight:500">${o.end||'—'}</td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div></td>
-    </tr>`;
-
-    if (tabId === 'season-tbody') return `<tr class="${rowClass}">
-      <td style="font-size:12px">${o.season||'—'}</td><td><strong>${o.name}</strong></td>
-      <td style="font-size:12px">${o.products}</td><td><span class="badge-type">${o.type}</span></td>
-      <td style="color:var(--gold);font-weight:600">${o.discount}</td><td style="color:var(--gold)">${o.code||'—'}</td>
-      <td>${deliveryBadge(o)}</td><td>${statusBadge(o.status)}</td>
-      <td style="font-size:13px;font-weight:500">${o.start||'—'} → ${o.end||'—'}</td>
-      <td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div></td>
-    </tr>`;
-
+function renderTable(tbodyId,data,type) {
+  const tbody=document.getElementById(tbodyId);
+  if(!tbody)return;
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="20"><div class="empty"><div class="empty-icon">📭</div>No offers</div></td></tr>`;return;}
+  tbody.innerHTML=data.map(o=>{
+    const i=offers.indexOf(o);
+    const fd=o['Free Delivery']==='yes'||o['Free Delivery']==='conditional';
+    const rc=fd?'del-free-row':'';
+    const n=o['Offer Name']||'', co=o['Code']||'', se=o['Season']||'—', pr=o['Products']||'—';
+    const sk=o['SKU']||'—', re=o['Regular Price']?'৳'+o['Regular Price']:'—';
+    const of=o['Offer Price']?'৳'+o['Offer Price']:'—', ty=o['Discount Type']||'—';
+    const di=o['Discount']||'—', ch=o['Channel']||'—', st=o['Status']||'—';
+    const s=o['Start']||'—', e=o['End']||'—', no=o['Notes']||'—';
+    const ac=`<div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editOffer(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deleteOffer(${i})">Del</button></div>`;
+    if(type==='all') return `<tr class="${rc}"><td><strong>${n}</strong>${co?`<br><small style="color:var(--gold);font-size:11px">🏷 ${co}</small>`:''}</td><td>${se}</td><td style="white-space:normal;font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td>${re}</td><td style="color:var(--gold)">${of}</td><td><span class="badge-type">${ty}</span></td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td><span class="badge-channel">${ch}</span></td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='web') return `<tr class="${rc}"><td><strong>${n}</strong></td><td>${se}</td><td style="color:var(--gold)">${co||'—'}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='inbox') return `<tr class="${rc}"><td><strong>${n}</strong></td><td>${se}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td>${delBadge(o)}</td><td style="font-size:12px;color:var(--text-muted);white-space:normal">${no}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
+    if(type==='office') return `<tr class="${rc}"><td><strong>${n}</strong></td><td>${se}</td><td style="font-size:12px">${pr}</td><td style="font-size:12px;color:var(--text-muted)">${sk}</td><td><span class="badge-type">${ty}</span></td><td>${re}</td><td style="color:var(--gold)">${of}</td><td style="color:var(--gold);font-weight:600">${di}</td><td style="font-size:12px;color:var(--text-muted)">${no}</td><td>${statusBadge(st)}</td><td style="font-size:12px">${s}</td><td style="font-size:12px">${e}</td><td>${ac}</td></tr>`;
     return '';
   }).join('');
 }
 
-function filterOffers() {
-  const search = (document.getElementById('search-input').value||'').toLowerCase();
-  const status = document.getElementById('filter-status').value;
-  const type = document.getElementById('filter-type').value;
-  const channel = document.getElementById('filter-channel').value;
-  const delivery = document.getElementById('filter-delivery').value;
-  const filtered = offers.filter(o =>
-    (!search || o.name.toLowerCase().includes(search) || o.products.toLowerCase().includes(search) || (o.code||'').toLowerCase().includes(search))
-    && (!status || o.status===status)
-    && (!type || o.type===type)
-    && (!channel || o.channel.includes(channel))
-    && (!delivery || (delivery==='yes'?(o.freeDelivery==='yes'||o.freeDelivery==='conditional'):(o.freeDelivery==='no')))
-  );
-  renderOffers('offers-tbody', filtered);
-}
-
-function renderAll() {
-  renderStats();
-  filterOffers();
-  renderOffers('web-tbody', offers.filter(o=>o.channel.includes('Website')));
-  renderOffers('inbox-tbody', offers.filter(o=>o.channel.includes('Inbox')));
-  renderOffers('office-tbody', offers.filter(o=>o.channel.includes('Office')));
-  renderOffers('season-tbody', offers.filter(o=>o.season&&o.season!=='Regular Offer'));
-
-  // Season icons — clickable, opens modal with pre-selected season
-  const seasonOfferCount = (name) => offers.filter(o=>o.season===name).length;
-  document.getElementById('season-icons').innerHTML = settings.categories
-    .filter(c => (c.name||c) !== 'Regular Offer')
-    .map(c => {
-      const name = c.name || c;
-      const icon = c.icon || '🏷';
-      const month = c.month || 'Any';
-      const count = seasonOfferCount(name);
-      return `<div class="season-card" onclick="openModalWithSeason(this.dataset.season)" data-season="${name}" title="Click to add offer for ${name}">
-        <div class="season-icon">${icon}</div>
-        <div class="season-name">${name}</div>
-        <div class="season-month">${month}</div>
-        <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:11px;color:${count>0?'var(--green)':'var(--text-muted)'}">
-            ${count>0?`${count} offer${count>1?'s':''}` : 'No offers yet'}
-          </span>
-          <span style="font-size:11px;background:var(--gold);color:var(--black);padding:2px 8px;border-radius:20px;font-weight:600">+ Add</span>
-        </div>
-      </div>`;
-    }).join('');
-}
-
-function switchTab(tab) {
-  const tabs = ['all','prices','website','inbox','office','seasonal','loyalty','settings'];
-  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', tabs[i]===tab));
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.getElementById('tab-'+tab).classList.add('active');
-  if (tab==='settings') { renderAllSettings(); populateDropdowns(); }
-  if (tab==='prices') { populatePriceDropdowns(); filterPrices(); }
-  if (tab==='loyalty') { renderLoyalty(); }
-  renderAll();
-}
-
-function openModalWithSeason(seasonName) {
-  openModal(-1);
-  setTimeout(() => {
-    populateDropdowns();
-    document.getElementById('f-season').value = seasonName;
-    document.getElementById('modal-title').textContent = `New Offer — ${seasonName}`;
-  }, 50);
-}
-
+// ========== OFFER CRUD ==========
 function openModal(idx=-1) {
-  editIndex = idx;
-  populateDropdowns();
-  document.getElementById('modal-title').textContent = idx===-1 ? 'New Offer' : 'Edit Offer';
-  const fields = ['name','season','code','products','sku','regular','offer','type','discount','channel','status','start','end','notes','min-order','del-note'];
-  if (idx===-1) {
-    fields.forEach(f => { const el=document.getElementById('f-'+f); if(el) el.value=''; });
-    document.getElementById('f-status').value='active';
-    document.getElementById('f-free-del').value='no';
-  } else {
-    const o = offers[idx];
-    document.getElementById('f-name').value=o.name||'';
-    document.getElementById('f-season').value=o.season||'';
-    document.getElementById('f-code').value=o.code||'';
-    document.getElementById('f-products').value=o.products||'';
-    document.getElementById('f-sku').value=o.sku||'';
-    document.getElementById('f-regular').value=o.regular||'';
-    document.getElementById('f-offer').value=o.offer||'';
-    document.getElementById('f-type').value=o.type||'';
-    document.getElementById('f-discount').value=o.discount||'';
-    document.getElementById('f-channel').value=o.channel||'';
-    document.getElementById('f-status').value=o.status||'active';
-    document.getElementById('f-start').value=o.start||'';
-    document.getElementById('f-end').value=o.end||'';
-    document.getElementById('f-notes').value=o.notes||'';
-    document.getElementById('f-free-del').value=o.freeDelivery||'no';
-    document.getElementById('f-min-order').value=o.minOrder||'';
-    document.getElementById('f-del-note').value=o.delNote||'';
+  editOfferIdx=idx;
+  document.getElementById('modal-title').textContent=idx===-1?'New Offer':'Edit Offer';
+  ['f-name','f-season','f-code','f-products','f-sku','f-regular','f-offer','f-discount','f-start','f-end','f-notes','f-min-order','f-del-note'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('f-status').value='active';
+  document.getElementById('f-free-del').value='no';
+  document.getElementById('f-type').value='';
+  document.getElementById('f-channel').value='';
+  if(idx!==-1){
+    const o=offers[idx];
+    document.getElementById('f-name').value=o['Offer Name']||'';
+    document.getElementById('f-season').value=o['Season']||'';
+    document.getElementById('f-code').value=o['Code']||'';
+    document.getElementById('f-products').value=o['Products']||'';
+    document.getElementById('f-sku').value=o['SKU']||'';
+    document.getElementById('f-regular').value=o['Regular Price']||'';
+    document.getElementById('f-offer').value=o['Offer Price']||'';
+    document.getElementById('f-type').value=o['Discount Type']||'';
+    document.getElementById('f-discount').value=o['Discount']||'';
+    document.getElementById('f-channel').value=o['Channel']||'';
+    document.getElementById('f-status').value=o['Status']||'active';
+    document.getElementById('f-start').value=o['Start']||'';
+    document.getElementById('f-end').value=o['End']||'';
+    document.getElementById('f-notes').value=o['Notes']||'';
+    document.getElementById('f-free-del').value=o['Free Delivery']||'no';
+    document.getElementById('f-min-order').value=o['Min Order']||'';
+    document.getElementById('f-del-note').value=o['Delivery Note']||'';
   }
   document.getElementById('modal').classList.add('open');
 }
+function closeModal(){document.getElementById('modal').classList.remove('open');}
 
-function closeModal() { document.getElementById('modal').classList.remove('open'); }
-
-function saveOffer() {
-  const name = document.getElementById('f-name').value.trim();
-  if (!name) { showToast('❌ Offer name required!'); return; }
-  const o = {
-    name, season:document.getElementById('f-season').value,
-    code:document.getElementById('f-code').value,
-    products:document.getElementById('f-products').value,
-    sku:document.getElementById('f-sku').value,
-    regular:document.getElementById('f-regular').value,
-    offer:document.getElementById('f-offer').value,
-    type:document.getElementById('f-type').value,
-    discount:document.getElementById('f-discount').value,
-    channel:document.getElementById('f-channel').value||'Website',
-    status:document.getElementById('f-status').value,
-    start:document.getElementById('f-start').value,
-    end:document.getElementById('f-end').value,
-    notes:document.getElementById('f-notes').value,
-    freeDelivery:document.getElementById('f-free-del').value,
-    minOrder:document.getElementById('f-min-order').value,
-    delNote:document.getElementById('f-del-note').value
-  };
-  if (editIndex===-1) { offers.push(o); showToast('✅ Offer added!'); }
-  else { offers[editIndex]=o; showToast('✅ Offer updated!'); }
-  saveOffers(); closeModal(); renderAll();
+function saveOffer(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){showToast('❌ Offer name required!');return;}
+  const o={'Offer Name':name,'Season':document.getElementById('f-season').value,'Code':document.getElementById('f-code').value,'Products':document.getElementById('f-products').value,'SKU':document.getElementById('f-sku').value,'Regular Price':document.getElementById('f-regular').value,'Offer Price':document.getElementById('f-offer').value,'Discount Type':document.getElementById('f-type').value,'Discount':document.getElementById('f-discount').value,'Channel':document.getElementById('f-channel').value||'Website','Status':document.getElementById('f-status').value,'Start':document.getElementById('f-start').value,'End':document.getElementById('f-end').value,'Notes':document.getElementById('f-notes').value,'Free Delivery':document.getElementById('f-free-del').value,'Min Order':document.getElementById('f-min-order').value,'Delivery Note':document.getElementById('f-del-note').value};
+  if(editOfferIdx===-1)offers.push(o);else offers[editOfferIdx]=o;
+  closeModal();renderAll();
+  saveToSheet('saveOffers', offers);
+}
+function editOffer(i){openModal(i);}
+function deleteOffer(i){
+  if(!confirm(`Delete "${offers[i]['Offer Name']}"?`))return;
+  offers.splice(i,1);renderAll();
+  saveToSheet('saveOffers', offers);
 }
 
-function editOffer(i) { openModal(i); }
-
-function deleteOffer(i) {
-  if (!confirm(`Delete "${offers[i].name}"?`)) return;
-  offers.splice(i,1);
-  saveOffers(); renderAll(); showToast('🗑 Deleted!');
+// ========== PRICE CRUD ==========
+function calcDiscount(){
+  const reg=parseFloat(document.getElementById('p-regular').value)||0;
+  const sale=parseFloat(document.getElementById('p-sale').value)||0;
+  if(reg>0&&sale>0&&sale<reg){const amt=reg-sale;document.getElementById('p-disc-pct').value=((amt/reg)*100).toFixed(1)+'%';document.getElementById('p-disc-amt').value='৳'+amt;}
+  else{document.getElementById('p-disc-pct').value='';document.getElementById('p-disc-amt').value='';}
 }
-
-function exportCSV() {
-  const headers = ['Offer Name','Season','Code','Products','SKU','Regular Price','Offer Price','Discount Type','Discount','Channel','Free Delivery','Min Order','Delivery Note','Status','Start','End','Notes'];
-  const rows = offers.map(o => [o.name,o.season,o.code,o.products,o.sku,o.regular,o.offer,o.type,o.discount,o.channel,o.freeDelivery,o.minOrder,o.delNote,o.status,o.start,o.end,o.notes].map(v=>`"${v||''}"`).join(','));
-  const csv = [headers.join(','),...rows].join('\n');
-  const a = document.createElement('a');
-  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download = 'TrendyBuzz_Offers.csv';
-  a.click();
-  showToast('⬇ CSV exported!');
-}
-
-// ==================== LOYALTY ====================
-let loyalties = JSON.parse(localStorage.getItem('tb_loyalties') || '[]');
-let loyaltyEditIdx = -1;
-
-if (loyalties.length === 0) {
-  loyalties = [
-    { icon:'📱', name:'WhatsApp Opt-in', desc:'Customer WhatsApp list-এ join করলে reward', reward:'৳50 OFF next order', code:'WAJOIN50', trigger:'Reply "YES" to message', status:'active', notes:'' },
-    { icon:'👍', name:'Facebook Page Review', desc:'FB page-এ review দিলে discount', reward:'৳100 OFF next order', code:'FBREVIEW100', trigger:'Screenshot send করলে', status:'active', notes:'' },
-    { icon:'⭐', name:'Google Review', desc:'Google-এ 5 star review দিলে discount', reward:'৳150 OFF next order', code:'GREVIEW150', trigger:'Screenshot send করলে', status:'planned', notes:'' },
-    { icon:'🌐', name:'Website Review', desc:'Website product review দিলে discount', reward:'৳100 OFF next order', code:'WEBREVIEW100', trigger:'Review submit করলে', status:'planned', notes:'' },
-    { icon:'👥', name:'Facebook Group Join', desc:'TrendyBuzz FB Group join করলে offer', reward:'৳75 OFF + Early Access', code:'TBGROUP75', trigger:'Screenshot send করলে', status:'active', notes:'' },
-    { icon:'🤝', name:'Influencer Collab', desc:'Influencer code দিয়ে customer discount পাবে', reward:'10% OFF for followers', code:'INFL_[NAME]', trigger:'Code use করলে', status:'planned', notes:'' },
-  ];
-  saveLoyalties();
-}
-
-function saveLoyalties() { localStorage.setItem('tb_loyalties', JSON.stringify(loyalties)); }
-
-function renderLoyalty() {
-  const grid = document.getElementById('loyalty-grid');
-  if (!grid) return;
-  if (!loyalties.length) {
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⭐</div>No loyalty offers yet</div>`;
-    return;
-  }
-  const statusColor = { active:'var(--green)', planned:'var(--orange)', inactive:'var(--text-muted)' };
-  const statusLabel = { active:'● Active', planned:'● Planned', inactive:'● Inactive' };
-  grid.innerHTML = loyalties.map((l, i) => `
-    <div class="loyalty-card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-        <h3 style="display:flex;align-items:center;gap:8px;margin-bottom:0">
-          <span style="font-size:22px">${l.icon||'⭐'}</span> ${l.name}
-        </h3>
-        <div style="display:flex;gap:6px">
-          <button class="btn-icon" onclick="openLoyaltyModal(${i})">✏️</button>
-          <button class="btn-icon" style="color:var(--red)" onclick="deleteLoyalty(${i})">🗑</button>
-        </div>
-      </div>
-      <p>${l.desc||''}</p>
-      <div class="loyalty-reward"><span>Reward</span><span>${l.reward||'—'}</span></div>
-      <div class="loyalty-reward"><span>Code</span><span>${l.code||'—'}</span></div>
-      <div class="loyalty-reward"><span>Trigger</span><span>${l.trigger||'—'}</span></div>
-      <div class="loyalty-reward"><span>Status</span><span style="color:${statusColor[l.status]||'var(--text-muted)'}">${statusLabel[l.status]||l.status}</span></div>
-      ${l.notes ? `<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding:8px;background:var(--card2);border-radius:6px">${l.notes}</div>` : ''}
-    </div>
-  `).join('');
-}
-
-function openLoyaltyModal(idx = -1) {
-  loyaltyEditIdx = idx;
-  document.getElementById('loyalty-modal-title').textContent = idx === -1 ? 'Add Loyalty Offer' : 'Edit Loyalty Offer';
-  if (idx === -1) {
-    ['l-icon','l-name','l-desc','l-reward','l-code','l-trigger','l-notes'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('l-status').value = 'active';
-  } else {
-    const l = loyalties[idx];
-    document.getElementById('l-icon').value = l.icon||'';
-    document.getElementById('l-name').value = l.name||'';
-    document.getElementById('l-desc').value = l.desc||'';
-    document.getElementById('l-reward').value = l.reward||'';
-    document.getElementById('l-code').value = l.code||'';
-    document.getElementById('l-trigger').value = l.trigger||'';
-    document.getElementById('l-status').value = l.status||'active';
-    document.getElementById('l-notes').value = l.notes||'';
-  }
-  document.getElementById('loyalty-modal').classList.add('open');
-}
-
-function closeLoyaltyModal() { document.getElementById('loyalty-modal').classList.remove('open'); }
-
-function saveLoyalty() {
-  const name = document.getElementById('l-name').value.trim();
-  if (!name) { showToast('❌ Name required!'); return; }
-  const l = {
-    icon: document.getElementById('l-icon').value.trim() || '⭐',
-    name, desc: document.getElementById('l-desc').value,
-    reward: document.getElementById('l-reward').value,
-    code: document.getElementById('l-code').value,
-    trigger: document.getElementById('l-trigger').value,
-    status: document.getElementById('l-status').value,
-    notes: document.getElementById('l-notes').value
-  };
-  if (loyaltyEditIdx === -1) { loyalties.push(l); showToast('✅ Loyalty offer added!'); }
-  else { loyalties[loyaltyEditIdx] = l; showToast('✅ Updated!'); }
-  saveLoyalties(); closeLoyaltyModal(); renderLoyalty();
-}
-
-function deleteLoyalty(i) {
-  if (!confirm(`Delete "${loyalties[i].name}"?`)) return;
-  loyalties.splice(i, 1);
-  saveLoyalties(); renderLoyalty(); showToast('🗑 Deleted!');
-}
-
-// ==================== PRODUCT PRICES ====================
-let prices = JSON.parse(localStorage.getItem('tb_prices') || '[]');
-let priceEditIndex = -1;
-
-const defaultProductCats = ['Tops','Bottoms','Dresses','Sets & Co-ords','Outerwear','Kimonos','Skirts','Blazers','Pants','Accessories'];
-let productCats = JSON.parse(localStorage.getItem('tb_product_cats') || 'null') || defaultProductCats;
-
-if (prices.length === 0) {
-  prices = [
-    { name:'Formal Pant', sku:'FP-001', cat:'Pants', regular:1200, sale:950, platform:'All Platforms', status:'sale', start:'2026-05-01', end:'', note:'Permanent sale price' },
-    { name:'Smokey Top', sku:'ST-001', cat:'Tops', regular:800, sale:800, platform:'All Platforms', status:'regular', start:'', end:'', note:'' },
-    { name:'Pleated Skirt', sku:'PS-002', cat:'Skirts', regular:1100, sale:950, platform:'All Platforms', status:'sale', start:'2026-05-10', end:'2026-05-25', note:'Bundle offer period' },
-    { name:'Kimono', sku:'KM-001', cat:'Kimonos', regular:1500, sale:1350, platform:'Website', status:'sale', start:'2026-05-01', end:'', note:'Website exclusive price' },
-    { name:'Crop Blazer Set', sku:'CB-001', cat:'Sets & Co-ords', regular:2200, sale:1950, platform:'All Platforms', status:'sale', start:'2026-05-01', end:'', note:'New arrival promo price' },
-  ];
-  savePrices();
-}
-
-function savePrices() { localStorage.setItem('tb_prices', JSON.stringify(prices)); }
-function saveProductCats() { localStorage.setItem('tb_product_cats', JSON.stringify(productCats)); }
-
-function calcDiscount() {
-  const reg = parseFloat(document.getElementById('p-regular').value) || 0;
-  const sale = parseFloat(document.getElementById('p-sale').value) || 0;
-  if (reg > 0 && sale > 0 && sale < reg) {
-    const amt = reg - sale;
-    const pct = ((amt / reg) * 100).toFixed(1);
-    document.getElementById('p-disc-pct').value = pct + '%';
-    document.getElementById('p-disc-amt').value = '৳' + amt;
-  } else {
-    document.getElementById('p-disc-pct').value = sale >= reg ? 'No discount' : '';
-    document.getElementById('p-disc-amt').value = '';
-  }
-}
-
-function populatePriceDropdowns() {
-  const pCat = document.getElementById('p-cat');
-  const filterCat = document.getElementById('price-filter-cat');
-  const filterPlat = document.getElementById('price-filter-platform');
-  if (pCat) pCat.innerHTML = productCats.map(c => `<option>${c}</option>`).join('');
-  if (filterCat) filterCat.innerHTML = '<option value="">All Categories</option>' + productCats.map(c => `<option>${c}</option>`).join('');
-  if (filterPlat) filterPlat.innerHTML = `<option value="">All Platforms</option>
-    <option>All Platforms</option><option>Website</option><option>Inbox</option>
-    <option>Office</option><option>Website + Inbox</option><option>Website + Office</option>`;
-}
-
-function renderPriceStats() {
-  const onSale = prices.filter(p => p.status === 'sale').length;
-  const avgDisc = prices.filter(p => p.sale && p.regular && p.sale < p.regular)
-    .reduce((sum, p, _, arr) => sum + ((p.regular - p.sale) / p.regular * 100) / arr.length, 0);
-  const totalSavings = prices.reduce((sum, p) => sum + (p.regular > p.sale ? p.regular - p.sale : 0), 0);
-  document.getElementById('price-stats-row').innerHTML = `
-    <div class="stat-card"><div class="stat-label">Total Products</div><div class="stat-value">${prices.length}</div></div>
-    <div class="stat-card"><div class="stat-label">On Sale</div><div class="stat-value" style="color:var(--green)">${onSale}</div></div>
-    <div class="stat-card"><div class="stat-label">Regular Price</div><div class="stat-value">${prices.filter(p=>p.status==='regular').length}</div></div>
-    <div class="stat-card"><div class="stat-label">Avg Discount</div><div class="stat-value" style="color:var(--gold)">${avgDisc.toFixed(1)}%</div></div>
-    <div class="stat-card"><div class="stat-label">Total Savings/Product</div><div class="stat-value" style="color:var(--gold)">৳${totalSavings}</div></div>
-  `;
-}
-
-function renderPricesTable(data) {
-  const tbody = document.getElementById('prices-tbody');
-  if (!data.length) { tbody.innerHTML = `<tr><td colspan="13"><div class="empty"><div class="empty-icon">🏷</div>No products found</div></td></tr>`; return; }
-  tbody.innerHTML = data.map((p, di) => {
-    const i = prices.indexOf(p);
-    const discAmt = p.regular && p.sale && p.sale < p.regular ? p.regular - p.sale : 0;
-    const discPct = p.regular && discAmt ? ((discAmt / p.regular) * 100).toFixed(1) : 0;
-    const statusBadgeP = p.status === 'sale'
-      ? `<span class="badge badge-active">On Sale</span>`
-      : p.status === 'discontinued'
-      ? `<span class="badge badge-expired">Discontinued</span>`
-      : `<span class="badge badge-inactive">Regular</span>`;
-    return `<tr>
-      <td><strong>${p.name}</strong></td>
-      <td style="font-size:13px;font-weight:500;color:var(--text-muted)">${p.sku||'—'}</td>
-      <td><span class="badge-type">${p.cat||'—'}</span></td>
-      <td>৳${p.regular||'—'}</td>
-      <td style="color:var(--gold);font-weight:600">${p.sale ? '৳'+p.sale : '—'}</td>
-      <td style="color:${discPct>0?'var(--green)':'var(--text-muted)'}; font-weight:600">${discPct>0 ? discPct+'%' : '—'}</td>
-      <td style="color:${discAmt>0?'var(--green)':'var(--text-muted)'}; font-weight:600">${discAmt>0 ? '৳'+discAmt : '—'}</td>
-      <td><span class="badge-channel">${p.platform||'All'}</span></td>
-      <td>${statusBadgeP}</td>
-      <td style="font-size:13px;font-weight:500">${p.start||'—'}</td>
-      <td style="font-size:13px;font-weight:500">${p.end||'—'}</td>
-      <td style="font-size:11px;color:var(--text-muted);max-width:120px;white-space:normal">${p.note||'—'}</td>
-      <td><div style="display:flex;gap:6px">
-        <button class="btn btn-outline btn-sm" onclick="editPrice(${i})">Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deletePrice(${i})">Del</button>
-      </div></td>
-    </tr>`;
+function renderPrices(data){
+  const tbody=document.getElementById('prices-tbody');
+  if(!tbody)return;
+  if(!data.length){tbody.innerHTML=`<tr><td colspan="13"><div class="empty"><div class="empty-icon">🏷</div>No products</div></td></tr>`;return;}
+  tbody.innerHTML=data.map((p,i)=>{
+    const reg=parseFloat(p['Regular Price'])||0,sale=parseFloat(p['Sale Price'])||0;
+    const dA=reg&&sale&&sale<reg?reg-sale:0,dP=reg&&dA?((dA/reg)*100).toFixed(1):0;
+    const sb=p['Status']==='sale'?`<span class="badge badge-active">On Sale</span>`:p['Status']==='discontinued'?`<span class="badge badge-expired">Discontinued</span>`:`<span class="badge badge-inactive">Regular</span>`;
+    return `<tr><td><strong>${p['Product Name']||'—'}</strong></td><td style="font-size:12px;color:var(--text-muted)">${p['SKU']||'—'}</td><td><span class="badge-type">${p['Category']||'—'}</span></td><td>${reg?'৳'+reg:'—'}</td><td style="color:var(--gold);font-weight:600">${sale?'৳'+sale:'—'}</td><td style="color:${dP>0?'var(--green)':'var(--text-muted)'};font-weight:600">${dP>0?dP+'%':'—'}</td><td style="color:${dA>0?'var(--green)':'var(--text-muted)'};font-weight:600">${dA>0?'৳'+dA:'—'}</td><td><span class="badge-channel">${p['Platform']||'—'}</span></td><td>${sb}</td><td style="font-size:12px">${p['Start']||'—'}</td><td style="font-size:12px">${p['End']||'—'}</td><td style="font-size:11px;color:var(--text-muted)">${p['Note']||'—'}</td><td><div style="display:flex;gap:6px"><button class="btn btn-outline btn-sm" onclick="editPrice(${i})">Edit</button><button class="btn btn-danger btn-sm" onclick="deletePrice(${i})">Del</button></div></td></tr>`;
   }).join('');
 }
-
-function filterPrices() {
-  const search = (document.getElementById('price-search').value||'').toLowerCase();
-  const cat = document.getElementById('price-filter-cat').value;
-  const platform = document.getElementById('price-filter-platform').value;
-  const status = document.getElementById('price-filter-status').value;
-  const filtered = prices.filter(p =>
-    (!search || p.name.toLowerCase().includes(search) || (p.sku||'').toLowerCase().includes(search))
-    && (!cat || p.cat === cat)
-    && (!platform || p.platform === platform)
-    && (!status || p.status === status)
-  );
-  renderPricesTable(filtered);
-  renderPriceStats();
-}
-
-function openPriceModal(idx = -1) {
-  priceEditIndex = idx;
-  populatePriceDropdowns();
-  document.getElementById('price-modal-title').textContent = idx === -1 ? 'Add Product Price' : 'Edit Product Price';
-  const fields = ['name','sku','regular','sale','note','start','end'];
-  if (idx === -1) {
-    fields.forEach(f => { const el = document.getElementById('p-'+f); if(el) el.value=''; });
-    document.getElementById('p-status').value = 'sale';
-    document.getElementById('p-platform').value = 'All Platforms';
-    document.getElementById('p-disc-pct').value = '';
-    document.getElementById('p-disc-amt').value = '';
-  } else {
-    const p = prices[idx];
-    document.getElementById('p-name').value = p.name||'';
-    document.getElementById('p-sku').value = p.sku||'';
-    document.getElementById('p-cat').value = p.cat||'';
-    document.getElementById('p-regular').value = p.regular||'';
-    document.getElementById('p-sale').value = p.sale||'';
-    document.getElementById('p-platform').value = p.platform||'All Platforms';
-    document.getElementById('p-status').value = p.status||'sale';
-    document.getElementById('p-start').value = p.start||'';
-    document.getElementById('p-end').value = p.end||'';
-    document.getElementById('p-note').value = p.note||'';
-    calcDiscount();
-  }
+function openPriceModal(idx=-1){
+  editPriceIdx=idx;
+  document.getElementById('price-modal-title').textContent=idx===-1?'Add Product Price':'Edit Product Price';
+  ['p-name','p-sku','p-cat','p-regular','p-sale','p-note','p-start','p-end'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('p-disc-pct').value='';document.getElementById('p-disc-amt').value='';
+  document.getElementById('p-status').value='sale';document.getElementById('p-platform').value='All Platforms';
+  if(idx!==-1){const p=prices[idx];document.getElementById('p-name').value=p['Product Name']||'';document.getElementById('p-sku').value=p['SKU']||'';document.getElementById('p-cat').value=p['Category']||'';document.getElementById('p-regular').value=p['Regular Price']||'';document.getElementById('p-sale').value=p['Sale Price']||'';document.getElementById('p-platform').value=p['Platform']||'All Platforms';document.getElementById('p-status').value=p['Status']||'sale';document.getElementById('p-start').value=p['Start']||'';document.getElementById('p-end').value=p['End']||'';document.getElementById('p-note').value=p['Note']||'';calcDiscount();}
   document.getElementById('price-modal').classList.add('open');
 }
-
-function closePriceModal() { document.getElementById('price-modal').classList.remove('open'); }
-
-function savePrice() {
-  const name = document.getElementById('p-name').value.trim();
-  if (!name) { showToast('❌ Product name required!'); return; }
-  const p = {
-    name, sku: document.getElementById('p-sku').value,
-    cat: document.getElementById('p-cat').value,
-    regular: parseFloat(document.getElementById('p-regular').value)||0,
-    sale: parseFloat(document.getElementById('p-sale').value)||0,
-    platform: document.getElementById('p-platform').value,
-    status: document.getElementById('p-status').value,
-    start: document.getElementById('p-start').value,
-    end: document.getElementById('p-end').value,
-    note: document.getElementById('p-note').value
-  };
-  if (priceEditIndex === -1) { prices.push(p); showToast('✅ Product price added!'); }
-  else { prices[priceEditIndex] = p; showToast('✅ Updated!'); }
-  savePrices(); closePriceModal(); filterPrices();
+function closePriceModal(){document.getElementById('price-modal').classList.remove('open');}
+function savePrice(){
+  const name=document.getElementById('p-name').value.trim();
+  if(!name){showToast('❌ Product name required!');return;}
+  const p={'Product Name':name,'SKU':document.getElementById('p-sku').value,'Category':document.getElementById('p-cat').value,'Regular Price':document.getElementById('p-regular').value,'Sale Price':document.getElementById('p-sale').value,'Platform':document.getElementById('p-platform').value,'Status':document.getElementById('p-status').value,'Start':document.getElementById('p-start').value,'End':document.getElementById('p-end').value,'Note':document.getElementById('p-note').value};
+  if(editPriceIdx===-1)prices.push(p);else prices[editPriceIdx]=p;
+  closePriceModal();renderPrices(prices);
+  saveToSheet('savePrices', prices);
 }
+function editPrice(i){openPriceModal(i);}
+function deletePrice(i){if(!confirm(`Delete "${prices[i]['Product Name']}"?`))return;prices.splice(i,1);renderPrices(prices);saveToSheet('savePrices',prices);}
 
-function editPrice(i) { openPriceModal(i); }
-
-function deletePrice(i) {
-  if (!confirm(`Delete "${prices[i].name}"?`)) return;
-  prices.splice(i, 1);
-  savePrices(); filterPrices(); showToast('🗑 Deleted!');
+// ========== LOYALTY CRUD ==========
+function renderLoyalty(){
+  const grid=document.getElementById('loyalty-grid');
+  if(!grid)return;
+  if(!loyalties.length){grid.innerHTML=`<div class="empty" style="grid-column:1/-1"><div class="empty-icon">⭐</div>No loyalty offers</div>`;return;}
+  const sc={active:'var(--green)',planned:'var(--orange)',inactive:'var(--text-muted)'};
+  const sl={active:'● Active',planned:'● Planned',inactive:'● Inactive'};
+  grid.innerHTML=loyalties.map((l,i)=>`<div class="loyalty-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h3 style="display:flex;align-items:center;gap:8px;margin-bottom:0"><span style="font-size:22px">${l.icon||'⭐'}</span>${l.name||''}</h3><div style="display:flex;gap:6px"><button class="btn-icon" onclick="editLoyalty(${i})">✏️</button><button class="btn-icon" style="color:var(--red)" onclick="deleteLoyalty(${i})">🗑</button></div></div><p>${l.desc||''}</p><div class="loyalty-reward"><span>Reward</span><span>${l.reward||'—'}</span></div><div class="loyalty-reward"><span>Code</span><span>${l.code||'—'}</span></div><div class="loyalty-reward"><span>Trigger</span><span>${l.trigger||'—'}</span></div><div class="loyalty-reward"><span>Status</span><span style="color:${sc[l.status]||'var(--text-muted)'}">${sl[l.status]||l.status}</span></div>${l.notes?`<div style="font-size:12px;color:var(--text-muted);margin-top:8px;padding:8px;background:var(--card2);border-radius:6px">${l.notes}</div>`:''}</div>`).join('');
 }
+function openLoyaltyModal(idx=-1){
+  editLoyaltyIdx=idx;
+  document.getElementById('loyalty-modal-title').textContent=idx===-1?'Add Loyalty Offer':'Edit Loyalty Offer';
+  ['l-icon','l-name','l-desc','l-reward','l-code','l-trigger','l-notes'].forEach(id=>{document.getElementById(id).value='';});
+  document.getElementById('l-status').value='active';
+  if(idx!==-1){const l=loyalties[idx];document.getElementById('l-icon').value=l.icon||'';document.getElementById('l-name').value=l.name||'';document.getElementById('l-desc').value=l.desc||'';document.getElementById('l-reward').value=l.reward||'';document.getElementById('l-code').value=l.code||'';document.getElementById('l-trigger').value=l.trigger||'';document.getElementById('l-status').value=l.status||'active';document.getElementById('l-notes').value=l.notes||'';}
+  document.getElementById('loyalty-modal').classList.add('open');
+}
+function closeLoyaltyModal(){document.getElementById('loyalty-modal').classList.remove('open');}
+function saveLoyalty(){
+  const name=document.getElementById('l-name').value.trim();
+  if(!name){showToast('❌ Name required!');return;}
+  const l={icon:document.getElementById('l-icon').value.trim()||'⭐',name,desc:document.getElementById('l-desc').value,reward:document.getElementById('l-reward').value,code:document.getElementById('l-code').value,trigger:document.getElementById('l-trigger').value,status:document.getElementById('l-status').value,notes:document.getElementById('l-notes').value};
+  if(editLoyaltyIdx===-1)loyalties.push(l);else loyalties[editLoyaltyIdx]=l;
+  closeLoyaltyModal();renderLoyalty();
+  saveToSheet('saveLoyalties', loyalties);
+}
+function editLoyalty(i){openLoyaltyModal(i);}
+function deleteLoyalty(i){if(!confirm(`Delete "${loyalties[i].name}"?`))return;loyalties.splice(i,1);renderLoyalty();saveToSheet('saveLoyalties',loyalties);}
 
-// ==================== INIT ====================
-populateDropdowns();
-populatePriceDropdowns();
-filterPrices();
-renderLoyalty();
-renderAll();
+// ========== EXPORT ==========
+function exportCSV(){
+  const headers=['Offer Name','Season','Code','Products','SKU','Regular Price','Offer Price','Discount Type','Discount','Channel','Free Delivery','Min Order','Delivery Note','Status','Start','End','Notes'];
+  const rows=offers.map(o=>headers.map(h=>`"${o[h]||''}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='TrendyBuzz_Offers.csv';a.click();
+  showToast('⬇ Exported!');
+}
 </script>
 </body>
 </html>
